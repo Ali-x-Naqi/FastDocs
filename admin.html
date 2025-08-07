@@ -80,7 +80,18 @@
     </div>
 
     <div id="course-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Course</h3><input id="course-name-input" type="text" placeholder="e.g., Data Structures" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal('course')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addCourse()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Course</button></div></div></div>
-    <div id="document-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Document</h3><p class="mb-2">Uploading to: <strong id="upload-target-info"></strong></p><input id="document-name-input" type="text" placeholder="File Name (e.g., Lecture 1.pdf)" class="w-full p-2 border rounded mb-2"><input id="document-url-input" type="text" placeholder="Google Drive Share URL" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal('document')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addDocument()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Document</button></div></div></div>
+    <div id="document-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold mb-4">Add New Document</h3>
+            <p class="mb-2">Uploading to: <strong id="upload-target-info"></strong></p>
+            <input id="document-name-input" type="text" placeholder="File Name (e.g., Lecture 1.pdf)" class="w-full p-2 border rounded mb-2">
+            <input id="document-url-input" type="text" placeholder="Google Drive Share URL" class="w-full p-2 border rounded mb-4">
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeModal('document')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                <button onclick="addDocument()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Document</button>
+            </div>
+        </div>
+    </div>
     
     <div id="confirm-modal" class="modal-backdrop">
         <div class="modal-content">
@@ -126,18 +137,18 @@
         // Auth State Listener with Role Check
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // User is logged in, now check their role
                 const userDoc = await getDoc(doc(db, "users", user.uid));
-
                 if (userDoc.exists() && userDoc.data().role === 'admin') {
-                    // User is an admin, show the admin panel
                     adminPanelContent.style.display = 'block';
                     loginFormContainer.style.display = 'none';
                     
-                    // Initialize Firestore listeners and rendering after a successful login
                     onSnapshot(collection(db, "academicData"), (snapshot) => {
                         if (snapshot.empty) {
-                            const initialData = Array.from({ length: 8 }, (_, i) => ({ id: `semester-${i + 1}`, name: `Semester ${i + 1}`, courses: [] }));
+                            const initialData = Array.from({ length: 8 }, (_, i) => ({ 
+                                id: `semester-${i + 1}`, 
+                                name: `Semester ${i + 1}`, 
+                                courses: [] 
+                            }));
                             Promise.all(initialData.map(sem => setDoc(doc(db, "academicData", sem.id), sem)));
                         } else {
                             academicData = snapshot.docs.map(doc => doc.data()).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
@@ -146,34 +157,28 @@
                         }
                     });
                 } else {
-                    // Log out the non-admin user
                     alert("You do not have permission to access this page.");
                     await signOut(auth);
                 }
             } else {
-                // User is logged out, show the login form and hide the admin panel
                 adminPanelContent.style.display = 'none';
                 loginFormContainer.style.display = 'block';
             }
         });
 
-        // Handle login form submission
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const email = document.getElementById('email-input').value;
             const password = document.getElementById('password-input').value;
-
             try {
                 await signInWithEmailAndPassword(auth, email, password);
                 console.log("Login attempt successful. Checking role...");
-                // onAuthStateChanged listener will handle UI changes after this
             } catch (error) {
                 console.error("Login failed:", error.message);
                 alert("Login failed: " + error.message);
             }
         });
 
-        // Handle logout button click
         logoutBtn.addEventListener('click', async () => {
             try {
                 await signOut(auth);
@@ -225,7 +230,15 @@
             const input = document.getElementById('course-name-input');
             if (input.value.trim() && activeSemesterIndex > -1) {
                 const semester = academicData[activeSemesterIndex];
-                semester.courses.push({ name: input.value.trim(), notes: [], pastPapers: [], slides: [], quizzes: [], assignments: [] });
+                const newCourse = { 
+                    name: input.value.trim(), 
+                    notes: [], 
+                    pastPapers: { 'MID 1': [], 'MID 2': [], 'FINAL': [] }, 
+                    slides: [], 
+                    quizzes: [], 
+                    assignments: [] 
+                };
+                semester.courses.push(newCourse);
                 await setDoc(doc(db, "academicData", semester.id), semester);
                 closeModal('course');
             }
@@ -236,7 +249,15 @@
             const urlInput = document.getElementById('document-url-input');
             if (nameInput.value.trim() && urlInput.value.trim() && activeSemesterIndex > -1) {
                 const semester = academicData[activeSemesterIndex];
-                semester.courses[currentCourseIndex][currentCategory].push({ name: nameInput.value.trim(), url: urlInput.value.trim() });
+                
+                // Handle nested structure for pastPapers
+                if (currentCategory.includes('pastPapers-')) {
+                    const subCategory = currentCategory.split('-')[1];
+                    semester.courses[currentCourseIndex].pastPapers[subCategory].push({ name: nameInput.value.trim(), url: urlInput.value.trim() });
+                } else {
+                    semester.courses[currentCourseIndex][currentCategory].push({ name: nameInput.value.trim(), url: urlInput.value.trim() });
+                }
+                
                 await setDoc(doc(db, "academicData", semester.id), semester);
                 closeModal('document');
             }
@@ -256,7 +277,13 @@
             document.getElementById('confirm-modal-text').innerText = "This will delete the document permanently.";
             confirmCallback = async () => {
                 const semester = academicData[activeSemesterIndex];
-                semester.courses[courseIndex][category].splice(docIndex, 1);
+                // Handle nested structure for pastPapers
+                if (category.includes('pastPapers-')) {
+                    const subCategory = category.split('-')[1];
+                    semester.courses[courseIndex].pastPapers[subCategory].splice(docIndex, 1);
+                } else {
+                    semester.courses[courseIndex][category].splice(docIndex, 1);
+                }
                 await setDoc(doc(db, "academicData", semester.id), semester);
             };
             confirmModal.style.display = 'flex';
@@ -294,9 +321,16 @@
             if (semester.courses.length > 0) {
                 semester.courses.forEach((course, courseIndex) => {
                     let categoriesHTML = '';
-                    const categories = {notes: 'Notes', pastPapers: 'Past Papers', slides: 'Slides', quizzes: 'Quizzes', assignments: 'Assignments'};
+                    const categories = {
+                        notes: 'Notes', 
+                        slides: 'Slides', 
+                        quizzes: 'Quizzes', 
+                        assignments: 'Assignments'
+                    };
+                    
+                    // Render simple categories first
                     Object.entries(categories).forEach(([key, displayName]) => {
-                        const docsList = course[key].map((doc, docIndex) => `
+                        const docsList = (course[key] || []).map((doc, docIndex) => `
                             <li class="flex justify-between items-center text-gray-600 text-sm py-1">
                                 <span>${doc.name}</span>
                                 <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
@@ -304,6 +338,25 @@
                         
                         categoriesHTML += `<div class="border rounded p-3"><div class="flex justify-between items-center mb-2"><h4 class="font-bold">${displayName}</h4><button onclick="openModal('document', ${courseIndex}, '${key}')" class="bg-blue-500 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center hover:bg-blue-600">+</button></div><ul class="divide-y">${docsList || '<li class="text-gray-400 text-sm py-1">No documents yet.</li>'}</ul></div>`;
                     });
+                    
+                    // Render Past Papers with sub-sections
+                    const pastPapersCategories = {
+                        'pastPapers-MID 1': 'MID 1', 
+                        'pastPapers-MID 2': 'MID 2', 
+                        'pastPapers-FINAL': 'FINAL'
+                    };
+                    let pastPapersHTML = '';
+                    Object.entries(pastPapersCategories).forEach(([key, displayName]) => {
+                        const subDocsList = (course.pastPapers[displayName] || []).map((doc, docIndex) => `
+                            <li class="flex justify-between items-center text-gray-600 text-sm py-1">
+                                <span>${doc.name}</span>
+                                <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                            </li>`).join('');
+                        
+                        pastPapersHTML += `<div class="border rounded p-3"><div class="flex justify-between items-center mb-2"><h4 class="font-bold">${displayName}</h4><button onclick="openModal('document', ${courseIndex}, '${key}')" class="bg-blue-500 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center hover:bg-blue-600">+</button></div><ul class="divide-y">${subDocsList || '<li class="text-gray-400 text-sm py-1">No documents yet.</li>'}</ul></div>`;
+                    });
+
+                    categoriesHTML += `<div class="border rounded p-3 col-span-full"><h4 class="font-bold text-lg mb-2">Past Papers</h4><div class="course-category-grid">${pastPapersHTML}</div></div>`;
 
                     coursesHTML += `<div class="bg-white rounded-lg shadow p-4 mb-4"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-semibold text-gray-700">${course.name}</h3><button onclick="deleteCourse(${courseIndex})" class="text-sm bg-red-100 text-red-700 px-3 py-1 rounded-full hover:bg-red-200">Delete Course</button></div><div class="course-category-grid">${categoriesHTML}</div></div>`;
                 });
