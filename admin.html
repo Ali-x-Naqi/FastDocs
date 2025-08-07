@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin: Academic Resource Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .view { display: none; }
+        .view.active { display: block; }
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 50; justify-content: center; align-items: center; }
+        .modal-content { background-color: white; padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 500px; }
+        .course-category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <header class="bg-gray-800 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold leading-tight">ADMIN PANEL</h1>
+            <p class="text-gray-400 mt-1">Manage Semesters, Courses, and Files</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view active">
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h4 class="text-sm font-medium text-gray-500">Total Semesters</h4>
+                    <p id="stats-semesters" class="text-3xl font-bold text-gray-900">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h4 class="text-sm font-medium text-gray-500">Total Courses</h4>
+                    <p id="stats-courses" class="text-3xl font-bold text-gray-900">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h4 class="text-sm font-medium text-gray-500">Total Documents</h4>
+                    <p id="stats-documents" class="text-3xl font-bold text-gray-900">0</p>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Semesters Dashboard</h2>
+            <div id="semesters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Semester cards will be injected here -->
+            </div>
+        </div>
+
+        <!-- Semester Detail View -->
+        <div id="semester-detail-view" class="view">
+            <div class="flex items-center mb-6">
+                <button onclick="showDashboardView()" class="text-blue-600 hover:underline">&larr; Back to Dashboard</button>
+            </div>
+            <div id="semester-detail-content">
+                <!-- Specific semester content will be injected here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="course-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Course</h3><input id="course-name-input" type="text" placeholder="e.g., Data Structures" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal('course')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addCourse()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Course</button></div></div></div>
+    <div id="document-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Document</h3><p class="mb-2">Uploading to: <strong id="upload-target-info"></strong></p><input id="document-name-input" type="text" placeholder="File Name (e.g., Lecture 1.pdf)" class="w-full p-2 border rounded mb-2"><input id="document-url-input" type="text" placeholder="Google Drive Share URL" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal('document')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addDocument()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Document</button></div></div></div>
+    
+    <!-- Custom Confirmation Modal -->
+    <div id="confirm-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
+            <p id="confirm-modal-text" class="text-gray-600 mb-6">This action cannot be undone.</p>
+            <div class="flex justify-end space-x-3">
+                <button id="confirm-cancel-btn" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                <button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+    apiKey: "AIzaSyB8cHUC5RU-s8HXhdSPpm1IU_d9z2e1r5k",
+    authDomain: "fast-docs-5c398.firebaseapp.com",
+    projectId: "fast-docs-5c398",
+    storageBucket: "fast-docs-5c398.firebasestorage.app",
+    messagingSenderId: "1017573179316",
+    appId: "1:1017573179316:web:7d011bede8b91d42013ce1",
+    measurementId: "G-1BS4ERVGYK"
+  };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let academicData = [];
+        let activeSemesterIndex = -1;
+        let currentCourseIndex = -1;
+        let currentCategory = '';
+        let confirmCallback = null;
+
+        const confirmModal = document.getElementById('confirm-modal');
+        document.getElementById('confirm-cancel-btn').onclick = () => confirmModal.style.display = 'none';
+        document.getElementById('confirm-delete-btn').onclick = () => {
+            if (confirmCallback) confirmCallback();
+            confirmModal.style.display = 'none';
+        };
+
+        onSnapshot(collection(db, "academicData"), (snapshot) => {
+            if (snapshot.empty) {
+                const initialData = Array.from({ length: 8 }, (_, i) => ({ id: `semester-${i + 1}`, name: `Semester ${i + 1}`, courses: [] }));
+                Promise.all(initialData.map(sem => setDoc(doc(db, "academicData", sem.id), sem)));
+            } else {
+                academicData = snapshot.docs.map(doc => doc.data()).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+                renderDashboard();
+                if (activeSemesterIndex !== -1) renderSemesterDetail(activeSemesterIndex);
+            }
+        });
+
+        window.showDashboardView = function() {
+            activeSemesterIndex = -1;
+            document.getElementById('dashboard-view').classList.add('active');
+            document.getElementById('semester-detail-view').classList.remove('active');
+        }
+
+        window.showSemesterView = function(semesterIndex) {
+            activeSemesterIndex = semesterIndex;
+            document.getElementById('dashboard-view').classList.remove('active');
+            document.getElementById('semester-detail-view').classList.add('active');
+            renderSemesterDetail(semesterIndex);
+        }
+
+        window.openModal = function(type, courseIndex, category) {
+            if (type === 'document') {
+                currentCourseIndex = courseIndex;
+                currentCategory = category;
+                document.getElementById('upload-target-info').innerText = `${academicData[activeSemesterIndex].courses[courseIndex].name} / ${category}`;
+            }
+            document.getElementById(`${type}-modal`).style.display = 'flex';
+        }
+
+        window.closeModal = function(type) {
+            document.getElementById(`${type}-modal`).style.display = 'none';
+            const nameInput = document.getElementById(`${type}-name-input`);
+            if (nameInput) nameInput.value = '';
+            const urlInput = document.getElementById(`${type}-url-input`);
+            if (urlInput) urlInput.value = '';
+        }
+
+        window.addCourse = async function() {
+            const input = document.getElementById('course-name-input');
+            if (input.value.trim() && activeSemesterIndex > -1) {
+                const semester = academicData[activeSemesterIndex];
+                semester.courses.push({ name: input.value.trim(), notes: [], pastPapers: [], slides: [], quizzes: [], assignments: [] });
+                await setDoc(doc(db, "academicData", semester.id), semester);
+                closeModal('course');
+            }
+        }
+
+        window.addDocument = async function() {
+            const nameInput = document.getElementById('document-name-input');
+            const urlInput = document.getElementById('document-url-input');
+            if (nameInput.value.trim() && urlInput.value.trim() && activeSemesterIndex > -1) {
+                const semester = academicData[activeSemesterIndex];
+                semester.courses[currentCourseIndex][currentCategory].push({ name: nameInput.value.trim(), url: urlInput.value.trim() });
+                await setDoc(doc(db, "academicData", semester.id), semester);
+                closeModal('document');
+            }
+        }
+        
+        window.deleteCourse = function(courseIndex) {
+            document.getElementById('confirm-modal-text').innerText = "This will delete the course and all its documents permanently.";
+            confirmCallback = async () => {
+                const semester = academicData[activeSemesterIndex];
+                semester.courses.splice(courseIndex, 1);
+                await setDoc(doc(db, "academicData", semester.id), semester);
+            };
+            confirmModal.style.display = 'flex';
+        }
+        
+        window.deleteDocument = function(courseIndex, category, docIndex) {
+            document.getElementById('confirm-modal-text').innerText = "This will delete the document permanently.";
+            confirmCallback = async () => {
+                const semester = academicData[activeSemesterIndex];
+                semester.courses[courseIndex][category].splice(docIndex, 1);
+                await setDoc(doc(db, "academicData", semester.id), semester);
+            };
+            confirmModal.style.display = 'flex';
+        }
+
+        function renderDashboard() {
+            const grid = document.getElementById('semesters-grid');
+            let courseCount = 0;
+            let docCount = 0;
+            grid.innerHTML = '';
+            academicData.forEach((semester, index) => {
+                courseCount += semester.courses.length;
+                semester.courses.forEach(course => {
+                    Object.values(course).forEach(val => {
+                        if (Array.isArray(val)) docCount += val.length;
+                    });
+                });
+
+                const card = document.createElement('div');
+                card.className = 'p-6 bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer';
+                card.onclick = () => showSemesterView(index);
+                card.innerHTML = `<h3 class="text-xl font-bold text-gray-800">${semester.name}</h3><p class="text-gray-500 mt-2">${semester.courses.length} courses</p>`;
+                grid.appendChild(card);
+            });
+            document.getElementById('stats-semesters').innerText = academicData.length;
+            document.getElementById('stats-courses').innerText = courseCount;
+            document.getElementById('stats-documents').innerText = docCount;
+        }
+
+        function renderSemesterDetail(semesterIndex) {
+            const content = document.getElementById('semester-detail-content');
+            const semester = academicData[semesterIndex];
+            
+            let coursesHTML = '';
+            if (semester.courses.length > 0) {
+                semester.courses.forEach((course, courseIndex) => {
+                    let categoriesHTML = '';
+                    const categories = {notes: 'Notes', pastPapers: 'Past Papers', slides: 'Slides', quizzes: 'Quizzes', assignments: 'Assignments'};
+                    Object.entries(categories).forEach(([key, displayName]) => {
+                        const docsList = course[key].map((doc, docIndex) => `
+                            <li class="flex justify-between items-center text-gray-600 text-sm py-1">
+                                <span>${doc.name}</span>
+                                <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                            </li>`).join('');
+                        
+                        categoriesHTML += `<div class="border rounded p-3"><div class="flex justify-between items-center mb-2"><h4 class="font-bold">${displayName}</h4><button onclick="openModal('document', ${courseIndex}, '${key}')" class="bg-blue-500 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center hover:bg-blue-600">+</button></div><ul class="divide-y">${docsList || '<li class="text-gray-400 text-sm py-1">No documents yet.</li>'}</ul></div>`;
+                    });
+
+                    coursesHTML += `<div class="bg-white rounded-lg shadow p-4 mb-4"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-semibold text-gray-700">${course.name}</h3><button onclick="deleteCourse(${courseIndex})" class="text-sm bg-red-100 text-red-700 px-3 py-1 rounded-full hover:bg-red-200">Delete Course</button></div><div class="course-category-grid">${categoriesHTML}</div></div>`;
+                });
+            } else {
+                coursesHTML = `<p class="text-gray-500 text-center">No courses added for this semester yet.</p>`;
+            }
+
+            content.innerHTML = `<div class="flex justify-between items-center mb-6"><h2 class="text-3xl font-bold text-gray-800">${semester.name}</h2><button onclick="openModal('course')" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600">+ Add Course</button></div>${coursesHTML}`;
+        }
+    </script>
+</body>
+</html>
