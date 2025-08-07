@@ -17,6 +17,7 @@
 </head>
 <body class="bg-gray-100">
 
+    <!-- Admin Login Form (initially shown) -->
     <div id="login-form-container" class="view active">
         <div class="max-w-md mx-auto mt-24 p-8 bg-white rounded-lg shadow-xl">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Admin Login</h2>
@@ -36,6 +37,7 @@
         </div>
     </div>
 
+    <!-- Admin Panel Content (initially hidden) -->
     <div id="admin-panel-content" class="view">
         <header class="bg-gray-800 text-white shadow-lg">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
@@ -48,7 +50,9 @@
         </header>
 
         <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Dashboard View -->
             <div id="dashboard-view" class="view active">
+                <!-- Stats Bar -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-lg shadow">
                         <h4 class="text-sm font-medium text-gray-500">Total Semesters</h4>
@@ -66,20 +70,34 @@
 
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Semesters Dashboard</h2>
                 <div id="semesters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    </div>
+                    <!-- Semester cards will be injected here -->
+                </div>
             </div>
 
+            <!-- Semester Detail View -->
             <div id="semester-detail-view" class="view">
                 <div class="flex items-center mb-6">
                     <button onclick="showDashboardView()" class="text-blue-600 hover:underline">&larr; Back to Dashboard</button>
                 </div>
                 <div id="semester-detail-content">
-                    </div>
+                    <!-- Specific semester content will be injected here -->
+                </div>
             </div>
         </main>
     </div>
 
-    <div id="course-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Course</h3><input id="course-name-input" type="text" placeholder="e.g., Data Structures" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal('course')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addCourse()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Course</button></div></div></div>
+    <!-- Modals -->
+    <div id="course-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold mb-4">Add New Course</h3>
+            <input id="course-name-input" type="text" placeholder="e.g., Data Structures" class="w-full p-2 border rounded mb-4">
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeModal('course')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                <button onclick="addCourse()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Course</button>
+            </div>
+        </div>
+    </div>
+    
     <div id="document-modal" class="modal-backdrop">
         <div class="modal-content">
             <h3 class="text-2xl font-bold mb-4">Add New Document</h3>
@@ -93,6 +111,7 @@
         </div>
     </div>
     
+    <!-- Custom Confirmation Modal -->
     <div id="confirm-modal" class="modal-backdrop">
         <div class="modal-content">
             <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
@@ -100,6 +119,18 @@
             <div class="flex justify-end space-x-3">
                 <button id="confirm-cancel-btn" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
                 <button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Document Modal -->
+    <div id="rename-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold mb-4">Rename Document</h3>
+            <input id="rename-name-input" type="text" placeholder="New File Name" class="w-full p-2 border rounded mb-4">
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeModal('rename')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                <button onclick="renameDocument()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Rename</button>
             </div>
         </div>
     </div>
@@ -127,6 +158,7 @@
         let activeSemesterIndex = -1;
         let currentCourseIndex = -1;
         let currentCategory = '';
+        let currentDocIndex = -1; // New variable to store the document index
         let confirmCallback = null;
 
         const loginFormContainer = document.getElementById('login-form-container');
@@ -218,12 +250,30 @@
             document.getElementById(`${type}-modal`).style.display = 'flex';
         }
 
+        window.openRenameModal = function(courseIndex, category, docIndex) {
+            currentCourseIndex = courseIndex;
+            currentCategory = category;
+            currentDocIndex = docIndex;
+            
+            let currentDoc;
+            if (category.includes('pastPapers-')) {
+                const subCategory = category.split('-')[1];
+                currentDoc = academicData[activeSemesterIndex].courses[courseIndex].pastPapers[subCategory][docIndex];
+            } else {
+                currentDoc = academicData[activeSemesterIndex].courses[courseIndex][category][docIndex];
+            }
+            
+            document.getElementById('rename-name-input').value = currentDoc.name;
+            document.getElementById('rename-modal').style.display = 'flex';
+        }
+
         window.closeModal = function(type) {
             document.getElementById(`${type}-modal`).style.display = 'none';
             const nameInput = document.getElementById(`${type}-name-input`);
             if (nameInput) nameInput.value = '';
             const urlInput = document.getElementById(`${type}-url-input`);
             if (urlInput) urlInput.value = '';
+            document.getElementById('rename-name-input').value = '';
         }
 
         window.addCourse = async function() {
@@ -250,7 +300,6 @@
             if (nameInput.value.trim() && urlInput.value.trim() && activeSemesterIndex > -1) {
                 const semester = academicData[activeSemesterIndex];
                 
-                // Handle nested structure for pastPapers
                 if (currentCategory.includes('pastPapers-')) {
                     const subCategory = currentCategory.split('-')[1];
                     semester.courses[currentCourseIndex].pastPapers[subCategory].push({ name: nameInput.value.trim(), url: urlInput.value.trim() });
@@ -260,6 +309,23 @@
                 
                 await setDoc(doc(db, "academicData", semester.id), semester);
                 closeModal('document');
+            }
+        }
+
+        window.renameDocument = async function() {
+            const newName = document.getElementById('rename-name-input').value.trim();
+            if (newName && activeSemesterIndex > -1) {
+                const semester = academicData[activeSemesterIndex];
+
+                if (currentCategory.includes('pastPapers-')) {
+                    const subCategory = currentCategory.split('-')[1];
+                    semester.courses[currentCourseIndex].pastPapers[subCategory][currentDocIndex].name = newName;
+                } else {
+                    semester.courses[currentCourseIndex][currentCategory][currentDocIndex].name = newName;
+                }
+                
+                await setDoc(doc(db, "academicData", semester.id), semester);
+                closeModal('rename');
             }
         }
         
@@ -277,7 +343,6 @@
             document.getElementById('confirm-modal-text').innerText = "This will delete the document permanently.";
             confirmCallback = async () => {
                 const semester = academicData[activeSemesterIndex];
-                // Handle nested structure for pastPapers
                 if (category.includes('pastPapers-')) {
                     const subCategory = category.split('-')[1];
                     semester.courses[courseIndex].pastPapers[subCategory].splice(docIndex, 1);
@@ -328,18 +393,19 @@
                         assignments: 'Assignments'
                     };
                     
-                    // Render simple categories first
                     Object.entries(categories).forEach(([key, displayName]) => {
                         const docsList = (course[key] || []).map((doc, docIndex) => `
                             <li class="flex justify-between items-center text-gray-600 text-sm py-1">
-                                <span>${doc.name}</span>
-                                <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                                <span class="flex-grow">${doc.name}</span>
+                                <div class="flex space-x-2">
+                                    <button onclick="openRenameModal(${courseIndex}, '${key}', ${docIndex})" class="text-blue-500 hover:text-blue-700 font-bold text-lg leading-none">&vellip;</button>
+                                    <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg leading-none">&times;</button>
+                                </div>
                             </li>`).join('');
                         
                         categoriesHTML += `<div class="border rounded p-3"><div class="flex justify-between items-center mb-2"><h4 class="font-bold">${displayName}</h4><button onclick="openModal('document', ${courseIndex}, '${key}')" class="bg-blue-500 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center hover:bg-blue-600">+</button></div><ul class="divide-y">${docsList || '<li class="text-gray-400 text-sm py-1">No documents yet.</li>'}</ul></div>`;
                     });
                     
-                    // Render Past Papers with sub-sections
                     const pastPapersCategories = {
                         'pastPapers-MID 1': 'MID 1', 
                         'pastPapers-MID 2': 'MID 2', 
@@ -349,8 +415,11 @@
                     Object.entries(pastPapersCategories).forEach(([key, displayName]) => {
                         const subDocsList = (course.pastPapers[displayName] || []).map((doc, docIndex) => `
                             <li class="flex justify-between items-center text-gray-600 text-sm py-1">
-                                <span>${doc.name}</span>
-                                <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                                <span class="flex-grow">${doc.name}</span>
+                                <div class="flex space-x-2">
+                                    <button onclick="openRenameModal(${courseIndex}, '${key}', ${docIndex})" class="text-blue-500 hover:text-blue-700 font-bold text-lg leading-none">&vellip;</button>
+                                    <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg leading-none">&times;</button>
+                                </div>
                             </li>`).join('');
                         
                         pastPapersHTML += `<div class="border rounded p-3"><div class="flex justify-between items-center mb-2"><h4 class="font-bold">${displayName}</h4><button onclick="openModal('document', ${courseIndex}, '${key}')" class="bg-blue-500 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center hover:bg-blue-600">+</button></div><ul class="divide-y">${subDocsList || '<li class="text-gray-400 text-sm py-1">No documents yet.</li>'}</ul></div>`;
