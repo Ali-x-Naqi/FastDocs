@@ -17,54 +17,71 @@
 </head>
 <body class="bg-gray-100">
 
-    <header class="bg-gray-800 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold leading-tight">ADMIN PANEL</h1>
-            <p class="text-gray-400 mt-1">Manage Semesters, Courses, and Files</p>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <!-- Dashboard View -->
-        <div id="dashboard-view" class="view active">
-            <!-- Stats Bar -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h4 class="text-sm font-medium text-gray-500">Total Semesters</h4>
-                    <p id="stats-semesters" class="text-3xl font-bold text-gray-900">0</p>
+    <div id="login-form-container" class="view active">
+        <div class="max-w-md mx-auto mt-24 p-8 bg-white rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Admin Login</h2>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="email-input" class="block text-sm font-medium text-gray-700">Email address</label>
+                    <input id="email-input" type="email" autocomplete="email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h4 class="text-sm font-medium text-gray-500">Total Courses</h4>
-                    <p id="stats-courses" class="text-3xl font-bold text-gray-900">0</p>
+                <div>
+                    <label for="password-input" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input id="password-input" type="password" autocomplete="current-password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h4 class="text-sm font-medium text-gray-500">Total Documents</h4>
-                    <p id="stats-documents" class="text-3xl font-bold text-gray-900">0</p>
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    Sign in
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-panel-content" class="view">
+        <header class="bg-gray-800 text-white shadow-lg">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold leading-tight">ADMIN PANEL</h1>
+                    <p class="text-gray-400 mt-1">Manage Semesters, Courses, and Files</p>
                 </div>
+                <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Logout</button>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div id="dashboard-view" class="view active">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-sm font-medium text-gray-500">Total Semesters</h4>
+                        <p id="stats-semesters" class="text-3xl font-bold text-gray-900">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-sm font-medium text-gray-500">Total Courses</h4>
+                        <p id="stats-courses" class="text-3xl font-bold text-gray-900">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-sm font-medium text-gray-500">Total Documents</h4>
+                        <p id="stats-documents" class="text-3xl font-bold text-gray-900">0</p>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Semesters Dashboard</h2>
+                <div id="semesters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    </div>
             </div>
 
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Semesters Dashboard</h2>
-            <div id="semesters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Semester cards will be injected here -->
+            <div id="semester-detail-view" class="view">
+                <div class="flex items-center mb-6">
+                    <button onclick="showDashboardView()" class="text-blue-600 hover:underline">&larr; Back to Dashboard</button>
+                </div>
+                <div id="semester-detail-content">
+                    </div>
             </div>
-        </div>
+        </main>
+    </div>
 
-        <!-- Semester Detail View -->
-        <div id="semester-detail-view" class="view">
-            <div class="flex items-center mb-6">
-                <button onclick="showDashboardView()" class="text-blue-600 hover:underline">&larr; Back to Dashboard</button>
-            </div>
-            <div id="semester-detail-content">
-                <!-- Specific semester content will be injected here -->
-            </div>
-        </div>
-    </main>
-
-    <!-- Modals -->
     <div id="course-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Course</h3><input id="course-name-input" type="text" placeholder="e.g., Data Structures" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal('course')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addCourse()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Course</button></div></div></div>
     <div id="document-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Document</h3><p class="mb-2">Uploading to: <strong id="upload-target-info"></strong></p><input id="document-name-input" type="text" placeholder="File Name (e.g., Lecture 1.pdf)" class="w-full p-2 border rounded mb-2"><input id="document-url-input" type="text" placeholder="Google Drive Share URL" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal('document')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addDocument()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Document</button></div></div></div>
     
-    <!-- Custom Confirmation Modal -->
     <div id="confirm-modal" class="modal-backdrop">
         <div class="modal-content">
             <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
@@ -78,20 +95,22 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
         const firebaseConfig = {
-    apiKey: "AIzaSyB8cHUC5RU-s8HXhdSPpm1IU_d9z2e1r5k",
-    authDomain: "fast-docs-5c398.firebaseapp.com",
-    projectId: "fast-docs-5c398",
-    storageBucket: "fast-docs-5c398.firebasestorage.app",
-    messagingSenderId: "1017573179316",
-    appId: "1:1017573179316:web:7d011bede8b91d42013ce1",
-    measurementId: "G-1BS4ERVGYK"
-  };
+            apiKey: "AIzaSyB8cHUC5RU-s8HXhdSPpm1IU_d9z2e1r5k",
+            authDomain: "fast-docs-5c398.firebaseapp.com",
+            projectId: "fast-docs-5c398",
+            storageBucket: "fast-docs-5c398.firebasestorage.app",
+            messagingSenderId: "1017573179316",
+            appId: "1:1017573179316:web:7d011bede8b91d42013ce1",
+            measurementId: "G-1BS4ERVGYK"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
         let academicData = [];
         let activeSemesterIndex = -1;
@@ -99,23 +118,78 @@
         let currentCategory = '';
         let confirmCallback = null;
 
+        const loginFormContainer = document.getElementById('login-form-container');
+        const adminPanelContent = document.getElementById('admin-panel-content');
+        const loginForm = document.getElementById('login-form');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // Auth State Listener with Role Check
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is logged in, now check their role
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+
+                if (userDoc.exists() && userDoc.data().role === 'admin') {
+                    // User is an admin, show the admin panel
+                    adminPanelContent.style.display = 'block';
+                    loginFormContainer.style.display = 'none';
+                    
+                    // Initialize Firestore listeners and rendering after a successful login
+                    onSnapshot(collection(db, "academicData"), (snapshot) => {
+                        if (snapshot.empty) {
+                            const initialData = Array.from({ length: 8 }, (_, i) => ({ id: `semester-${i + 1}`, name: `Semester ${i + 1}`, courses: [] }));
+                            Promise.all(initialData.map(sem => setDoc(doc(db, "academicData", sem.id), sem)));
+                        } else {
+                            academicData = snapshot.docs.map(doc => doc.data()).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+                            renderDashboard();
+                            if (activeSemesterIndex !== -1) renderSemesterDetail(activeSemesterIndex);
+                        }
+                    });
+                } else {
+                    // Log out the non-admin user
+                    alert("You do not have permission to access this page.");
+                    await signOut(auth);
+                }
+            } else {
+                // User is logged out, show the login form and hide the admin panel
+                adminPanelContent.style.display = 'none';
+                loginFormContainer.style.display = 'block';
+            }
+        });
+
+        // Handle login form submission
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const email = document.getElementById('email-input').value;
+            const password = document.getElementById('password-input').value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                console.log("Login attempt successful. Checking role...");
+                // onAuthStateChanged listener will handle UI changes after this
+            } catch (error) {
+                console.error("Login failed:", error.message);
+                alert("Login failed: " + error.message);
+            }
+        });
+
+        // Handle logout button click
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                console.log("Admin logged out successfully.");
+            } catch (error) {
+                console.error("Logout failed:", error.message);
+            }
+        });
+
+
         const confirmModal = document.getElementById('confirm-modal');
         document.getElementById('confirm-cancel-btn').onclick = () => confirmModal.style.display = 'none';
         document.getElementById('confirm-delete-btn').onclick = () => {
             if (confirmCallback) confirmCallback();
             confirmModal.style.display = 'none';
         };
-
-        onSnapshot(collection(db, "academicData"), (snapshot) => {
-            if (snapshot.empty) {
-                const initialData = Array.from({ length: 8 }, (_, i) => ({ id: `semester-${i + 1}`, name: `Semester ${i + 1}`, courses: [] }));
-                Promise.all(initialData.map(sem => setDoc(doc(db, "academicData", sem.id), sem)));
-            } else {
-                academicData = snapshot.docs.map(doc => doc.data()).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-                renderDashboard();
-                if (activeSemesterIndex !== -1) renderSemesterDetail(activeSemesterIndex);
-            }
-        });
 
         window.showDashboardView = function() {
             activeSemesterIndex = -1;
