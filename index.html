@@ -17,20 +17,23 @@
 </head>
 <body class="bg-gray-100 text-gray-900">
 
+    <!-- Updated Header: Aligned Home and About links to the right -->
     <header class="bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-40">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
-                 <a href="#" onclick="showDashboardView()" class="flex items-center space-x-2">
+                <!-- Logo on the left -->
+                <a href="#" onclick="showDashboardView()" class="flex items-center space-x-2">
                     <svg class="h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                     </svg>
                     <h1 class="text-2xl font-bold text-indigo-600">FastDocs</h1>
-                 </a>
-                 <nav class="hidden md:flex items-center space-x-8">
+                </a>
+                <!-- Navigation links aligned to the right -->
+                <nav class="flex items-center space-x-8">
                     <a href="#" onclick="showDashboardView()" class="font-medium text-gray-600 hover:text-indigo-600">Home</a>
-                    <a href="#" class="font-medium text-gray-600 hover:text-indigo-600">About</a>
-                 </nav>
-                 <div id="breadcrumb" class="text-sm font-medium text-gray-500 hidden md:block"></div>
+                    <a href="about.html" class="font-medium text-gray-600 hover:text-indigo-600">About</a>
+                </nav>
+                <div id="breadcrumb" class="text-sm font-medium text-gray-500 hidden md:block"></div>
             </div>
         </div>
     </header>
@@ -79,7 +82,7 @@
     </main>
     
     <footer class="bg-white text-gray-800 mt-12 border-t">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="md:col-span-1">
                 <h3 class="font-bold text-lg mb-2">FastDocs</h3>
                 <p class="text-gray-500">An open-source project by Ali Naqi to make academic resources for FAST CFD easily accessible.</p>
@@ -88,23 +91,12 @@
                 <h3 class="font-semibold mb-4">Navigate</h3>
                 <ul class="space-y-2 text-gray-500">
                     <li><a href="#" onclick="showDashboardView()" class="hover:text-indigo-600">Home</a></li>
-                    <li><a href="#" class="hover:text-indigo-600">About</a></li>
+                    <li><a href="about.html" class="hover:text-indigo-600">About</a></li>
                 </ul>
-            </div>
-             <div class="md:text-center">
-                <h3 class="font-semibold mb-4">Connect</h3>
-                <div class="flex md:justify-center space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-indigo-600" aria-label="GitHub">
-                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12.014c0 4.438 2.865 8.225 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12.014C22 6.477 17.523 2 12 2z" clip-rule="evenodd" /></svg>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-indigo-600" aria-label="Instagram">
-                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.343 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.148 2 12.315 2zm-1.04 2.546c-1.004.045-1.625.2-2.148.405a2.87 2.87 0 00-1.06 1.06c-.206.523-.36 1.144-.405 2.148-.045 1.02-.056 1.348-.056 3.654s.011 2.634.056 3.654c.045 1.004.2 1.625.405 2.148a2.87 2.87 0 001.06 1.06c.523.206 1.144.36 2.148.405 1.02.045 1.348.056 3.654.056s2.634-.011 3.654-.056c1.004-.045 1.625-.2 2.148-.405a2.87 2.87 0 001.06-1.06c.206-.523.36-1.144.405-2.148.045-1.02.056-1.348-.056-3.654s-.011-2.634-.056-3.654c-.045-1.004-.2-1.625-.405-2.148a2.87 2.87 0 00-1.06-1.06c-.523-.206-1.144-.36-2.148-.405C14.53 4.557 14.202 4.546 11.274 4.546zm-2.498 1.522a4.94 4.94 0 100 9.879 4.94 4.94 0 000-9.879zm-2.934 4.94a2.934 2.934 0 115.868 0 2.934 2.934 0 01-5.868 0zm10.158-6.19a1.157 1.157 0 100 2.313 1.157 1.157 0 000-2.313z" clip-rule="evenodd" /></svg>
-                    </a>
-                </div>
             </div>
         </div>
         <div class="mt-8 border-t border-gray-200 pt-8 text-center">
-             <p class="text-base text-gray-400">&copy; 2025 FastDocs. Created by Ali Naqi.</p>
+            <p class="text-base text-gray-400">&copy; 2025 FastDocs. Created by Ali Naqi.</p>
         </div>
     </footer>
 
@@ -113,14 +105,14 @@
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
         const firebaseConfig = {
-    apiKey: "AIzaSyB8cHUC5RU-s8HXhdSPpm1IU_d9z2e1r5k",
-    authDomain: "fast-docs-5c398.firebaseapp.com",
-    projectId: "fast-docs-5c398",
-    storageBucket: "fast-docs-5c398.firebasestorage.app",
-    messagingSenderId: "1017573179316",
-    appId: "1:1017573179316:web:7d011bede8b91d42013ce1",
-    measurementId: "G-1BS4ERVGYK"
-  };
+            apiKey: "AIzaSyB8cHUC5RU-s8HXhdSPpm1IU_d9z2e1r5k",
+            authDomain: "fast-docs-5c398.firebaseapp.com",
+            projectId: "fast-docs-5c398",
+            storageBucket: "fast-docs-5c398.firebasestorage.app",
+            messagingSenderId: "1017573179316",
+            appId: "1:1017573179316:web:7d011bede8b91d42013ce1",
+            measurementId: "G-1BS4ERVGYK"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -143,10 +135,8 @@
             }
         });
 
-        // --- SEARCH LOGIC ---
         function performSearch() {
             const query = searchInput.value.toLowerCase().trim();
-
             if (query === '') {
                 showDashboardView();
                 return;
@@ -161,20 +151,31 @@
                 semester.courses.forEach(course => {
                     let courseMatch = course.name.toLowerCase().includes(query);
                     
-                    Object.keys(course).forEach(categoryKey => {
-                        if (Array.isArray(course[categoryKey])) {
-                            course[categoryKey].forEach(doc => {
-                                if (courseMatch || doc.name.toLowerCase().includes(query)) {
-                                    results.push({
-                                        semesterName: semester.name,
-                                        courseName: course.name,
-                                        docName: doc.name,
-                                        docUrl: doc.url
-                                    });
-                                }
-                            });
-                        }
-                    });
+                    const checkDocuments = (docArray, parentName) => {
+                        if (!docArray) return;
+                        docArray.forEach(doc => {
+                            if (courseMatch || doc.name.toLowerCase().includes(query)) {
+                                results.push({
+                                    semesterName: semester.name,
+                                    courseName: course.name,
+                                    docName: doc.name,
+                                    docUrl: doc.url,
+                                    category: parentName
+                                });
+                            }
+                        });
+                    };
+
+                    checkDocuments(course.notes, 'Notes');
+                    checkDocuments(course.slides, 'Slides');
+                    checkDocuments(course.quizzes, 'Quizzes');
+                    checkDocuments(course.assignments, 'Assignments');
+                    
+                    if (course.pastPapers) {
+                        checkDocuments(course.pastPapers['MID 1'], 'Past Papers (MID 1)');
+                        checkDocuments(course.pastPapers['MID 2'], 'Past Papers (MID 2)');
+                        checkDocuments(course.pastPapers['FINAL'], 'Past Papers (FINAL)');
+                    }
                 });
             });
             
@@ -190,7 +191,6 @@
 
         function renderSearchResults(results, query) {
             let html = `<h2 class="text-3xl font-bold text-gray-900 mb-8">Search Results for "${query}"</h2>`;
-            
             if (results.length === 0) {
                 html += `<div class="text-center py-16 bg-white rounded-lg shadow-sm"><p class="text-gray-500">No results found.</p></div>`;
             } else {
@@ -202,7 +202,7 @@
                                 ${getFileIcon(result.docName)}
                                 <div>
                                     <p class="font-semibold text-blue-700">${result.docName}</p>
-                                    <p class="text-sm text-gray-500">${result.semesterName} &gt; ${result.courseName}</p>
+                                    <p class="text-sm text-gray-500">${result.semesterName} > ${result.courseName} > ${result.category}</p>
                                 </div>
                             </div>
                         </a>
@@ -210,11 +210,9 @@
                 });
                 html += '</div>';
             }
-            
             searchResultsView.innerHTML = html;
         }
 
-        // --- NAVIGATION ---
         window.showDashboardView = function() {
             activeSemesterIndex = -1;
             dashboardView.classList.add('active');
@@ -235,7 +233,6 @@
             renderSemesterDetail(semesterIndex);
         }
         
-        // --- ACCORDION TOGGLE ---
         window.toggleAccordion = function(element) {
             const content = element.nextElementSibling;
             const icon = element.querySelector('.accordion-icon');
@@ -271,7 +268,7 @@
                     grid.appendChild(card);
                 });
             } else if (!academicData.length) {
-                 grid.innerHTML = `<p class="text-center col-span-full text-gray-500">No semesters found. The admin may need to add content.</p>`;
+                grid.innerHTML = `<p class="text-center col-span-full text-gray-500">No semesters found. The admin may need to add content.</p>`;
             }
         }
 
@@ -284,7 +281,13 @@
             if (semester.courses.length > 0) {
                 semester.courses.forEach((course) => {
                     let categoriesHTML = '';
-                    const categories = {notes: 'Notes', pastPapers: 'Past Papers', slides: 'Slides', quizzes: 'Quizzes', assignments: 'Assignments'};
+                    const categories = {
+                        notes: 'Notes', 
+                        slides: 'Slides', 
+                        quizzes: 'Quizzes', 
+                        assignments: 'Assignments'
+                    };
+                    
                     Object.entries(categories).forEach(([key, displayName]) => {
                         if (course[key] && course[key].length > 0) {
                             const docsList = course[key].map(doc => `
@@ -294,13 +297,32 @@
                                         <span class="truncate">${doc.name}</span>
                                     </a>
                                 </li>`).join('');
-                            
                             categoriesHTML += `<div class="mb-4"><h4 class="font-semibold text-gray-600 mb-2">${displayName}</h4><ul class="space-y-1">${docsList}</ul></div>`;
                         }
                     });
+                    
+                    if (course.pastPapers) {
+                        let pastPapersContent = '';
+                        const pastPapersCategories = ['MID 1', 'MID 2', 'FINAL'];
+                        pastPapersCategories.forEach(term => {
+                            if (course.pastPapers[term] && course.pastPapers[term].length > 0) {
+                                const docsList = course.pastPapers[term].map(doc => `
+                                    <li>
+                                        <a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="flex items-center text-blue-700 hover:text-blue-900 hover:bg-blue-50 p-2 rounded-md transition-colors">
+                                            ${getFileIcon(doc.name)}
+                                            <span class="truncate">${doc.name}</span>
+                                        </a>
+                                    </li>`).join('');
+                                pastPapersContent += `<div class="mb-4"><h5 class="font-medium text-gray-600 pl-4 mb-2">${term}</h5><ul class="space-y-1">${docsList}</ul></div>`;
+                            }
+                        });
+                        if(pastPapersContent){
+                            categoriesHTML += `<div class="mb-4"><h4 class="font-semibold text-gray-600 mb-2">Past Papers</h4>${pastPapersContent}</div>`;
+                        }
+                    }
 
                     if (categoriesHTML) {
-                         coursesHTML += `
+                        coursesHTML += `
                             <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
                                 <button onclick="toggleAccordion(this)" class="w-full flex justify-between items-center text-left p-5 bg-white hover:bg-gray-50 transition-colors">
                                     <h3 class="text-lg font-semibold text-gray-800">${course.name}</h3>
