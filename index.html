@@ -4,83 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FastDocs - FAST CFD Resources</title>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .view { display: none; }
         .view.active { display: block; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #6366f1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 4rem auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .moon-icon { display: block; }
+        .sun-icon { display: none; }
+        html.dark .moon-icon { display: none; }
+        html.dark .sun-icon { display: block; }
+
+        html.dark body { background-color: #111827; color: #e5e7eb; }
+        html.dark header { background-color: rgba(31, 41, 55, 0.8); }
+        html.dark footer { background-color: #1f2937; border-top-color: #374151; }
+        html.dark .bg-white { background-color: #1f2937; }
+        html.dark .bg-gray-50 { background-color: rgba(55, 65, 81, 0.5); }
+        html.dark .text-gray-900 { color: #f9fafb; }
+        html.dark .text-gray-800 { color: #f3f4f6; }
+        html.dark .text-gray-700 { color: #d1d5db; }
+        html.dark .text-gray-600 { color: #9ca3af; }
+        html.dark .text-gray-500 { color: #6b7280; }
+        html.dark .text-gray-400 { color: #9ca3af; }
+        html.dark .text-indigo-600 { color: #818cf8; }
+        html.dark .text-indigo-700 { color: #a5b4fc; }
+        html.dark .hover\:text-indigo-600:hover { color: #a5b4fc; }
+        html.dark .hover\:text-indigo-900:hover { color: #c7d2fe; }
+        html.dark .border-transparent { border-color: transparent; }
+        html.dark .border-gray-200 { border-color: #374151; }
+        html.dark .border-indigo-200 { border-color: #3730a3; }
+        html.dark .hover\:border-indigo-500:hover { border-color: #6366f1; }
+        html.dark .hover\:bg-gray-100:hover { background-color: rgba(55, 65, 81, 0.5); }
+        html.dark .hover\:bg-gray-200:hover { background-color: #374151; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gray-100 text-gray-900 transition-colors duration-300">
 
     <header class="bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-40">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <a href="#" onclick="showDashboardView()" class="flex items-center space-x-2">
-                    <svg class="h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-                    </svg>
+                    <svg class="h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
                     <h1 class="text-2xl font-bold text-indigo-600">FastDocs</h1>
                 </a>
-                <nav class="flex items-center space-x-8">
-                    <a href="#" onclick="showDashboardView()" class="font-medium text-gray-600 hover:text-indigo-600">Home</a>
-                    <a href="about.html" class="font-medium text-gray-600 hover:text-indigo-600">About</a>
-                </nav>
+                <div class="flex items-center">
+                    <nav id="breadcrumb" class="text-sm font-medium text-gray-500 hidden md:flex items-center space-x-2"></nav>
+                    <button id="dark-mode-toggle" class="ml-6 p-2 rounded-full text-gray-600 hover:bg-gray-200 focus:outline-none">
+                        <svg class="h-6 w-6 moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                        <svg class="h-6 w-6 sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <div id="dashboard-view" class="view active">
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 md:p-12 rounded-xl text-white mb-12 shadow-lg text-center">
-                <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Welcome to FastDocs</h2>
-                <p class="text-indigo-100 text-lg max-w-2xl mx-auto mb-8">A resource hub for FAST CFD, created by Ali Naqi.</p>
-                <div class="max-w-xl mx-auto">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
-                        </div>
-                        <input id="search-input" type="text" placeholder="Search for courses or documents..." class="w-full p-3 pl-10 rounded-full bg-white/20 text-white placeholder-indigo-100 focus:outline-none focus:ring-2 focus:ring-white">
-                    </div>
-                </div>
-            </div>
-            
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">University Semesters</h3>
-            <div id="semesters-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-        </div>
-
-        <div id="semester-detail-view" class="view">
-            <div class="flex items-center mb-6">
-                <button onclick="showDashboardView()" class="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                    All Semesters
-                </button>
-            </div>
-            <div id="semester-detail-content"></div>
-        </div>
-        
+        <div id="dashboard-view" class="view active"></div>
+        <div id="semester-detail-view" class="view"></div>
+        <div id="course-detail-view" class="view"></div>
         <div id="search-results-view" class="view"></div>
     </main>
     
     <footer class="bg-white text-gray-800 mt-12 border-t">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="md:col-span-1">
-                <h3 class="font-bold text-lg mb-2">FastDocs</h3>
-                <p class="text-gray-500">An open-source project by Ali Naqi to make academic resources for FAST CFD easily accessible.</p>
-            </div>
-            <div class="md:text-center">
-                <h3 class="font-semibold mb-4">Navigate</h3>
-                <ul class="space-y-2 text-gray-500">
-                    <li><a href="#" onclick="showDashboardView()" class="hover:text-indigo-600">Home</a></li>
-                    <li><a href="about.html" class="hover:text-indigo-600">About</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="mt-8 border-t border-gray-200 pt-8 text-center">
-            <p class="text-base text-gray-400">&copy; 2025 FastDocs. Created by Ali Naqi.</p>
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+             <h3 class="font-bold text-lg mb-2">FastDocs</h3>
+             <p class="text-gray-500">An open-source project by Ali Naqi to make academic resources for FAST CFD easily accessible.</p>
+             <p class="text-xs text-gray-400 mt-8">&copy; 2025 FastDocs. All Rights Reserved.</p>
         </div>
     </footer>
 
@@ -102,90 +108,145 @@
 
         let academicData = [];
         let activeSemesterIndex = -1;
+        let activeCourseIndex = -1;
 
-        const dashboardView = document.getElementById('dashboard-view');
-        const semesterDetailView = document.getElementById('semester-detail-view');
-        const searchInput = document.getElementById('search-input');
-        const searchResultsView = document.getElementById('search-results-view');
+        const allViews = document.querySelectorAll('.view');
+        const breadcrumbEl = document.getElementById('breadcrumb');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        });
 
         onSnapshot(collection(db, "academicData"), (snapshot) => {
             academicData = snapshot.docs.map(doc => doc.data()).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-            if (activeSemesterIndex === -1 && searchInput.value.trim() === '') {
-                renderDashboard();
-            } else if (activeSemesterIndex !== -1) {
-                renderSemesterDetail(activeSemesterIndex);
+            const currentView = document.querySelector('.view.active')?.id;
+            if (currentView) {
+                switch(currentView) {
+                    case 'dashboard-view': showDashboardView(); break;
+                    case 'semester-detail-view': showSemesterView(activeSemesterIndex); break;
+                    case 'course-detail-view': showCourseView(activeSemesterIndex, activeCourseIndex); break;
+                }
             }
         });
-
-        function performSearch() {
-            const query = searchInput.value.toLowerCase().trim();
-            if (query === '') { showDashboardView(); return; }
-            dashboardView.classList.remove('active');
-            semesterDetailView.classList.remove('active');
-            searchResultsView.classList.add('active');
-            const results = [];
-            academicData.forEach(semester => {
-                (semester.courses || []).forEach(course => {
-                    let courseMatch = course.name.toLowerCase().includes(query);
-                    (course.sections || []).forEach(section => {
-                        const checkDocs = (docs, subfolderName = null) => {
-                            (docs || []).forEach(doc => {
-                                if (courseMatch || section.name.toLowerCase().includes(query) || doc.name.toLowerCase().includes(query)) {
-                                    let categoryPath = `${section.name}`;
-                                    if (subfolderName) categoryPath += ` / ${subfolderName}`;
-                                    results.push({ semesterName: semester.name, courseName: course.name, docName: doc.name, docUrl: doc.url, category: categoryPath });
-                                }
-                            });
-                        };
-                        checkDocs(section.documents);
-                        (section.subfolders || []).forEach(sub => checkDocs(sub.items, sub.name));
-                    });
-                });
-            });
-            const uniqueResults = Array.from(new Set(results.map(JSON.stringify))).map(JSON.parse);
-            renderSearchResults(uniqueResults, query);
-        }
-        searchInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { performSearch(); } });
         
-        function renderSearchResults(results, query) {
-            let html = `<h2 class="text-3xl font-bold text-gray-900 mb-8">Search Results for "${query}"</h2>`;
-            if (results.length === 0) {
-                html += `<div class="text-center py-16 bg-white rounded-lg shadow-sm"><p class="text-gray-500">No results found.</p></div>`;
-            } else {
-                html += '<div class="space-y-2">';
-                results.forEach(result => {
-                    html += `
-                        <a href="${result.docUrl}" target="_blank" rel="noopener noreferrer" class="block bg-white p-4 rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center">
-                                ${getFileIcon(result.docName)}
-                                <div>
-                                    <p class="font-semibold text-blue-700">${result.docName}</p>
-                                    <p class="text-sm text-gray-500">${result.semesterName} &gt; ${result.courseName} &gt; ${result.category}</p>
-                                </div>
-                            </div>
-                        </a>
-                    `;
-                });
-                html += '</div>';
-            }
-            searchResultsView.innerHTML = html;
+        function switchView(viewId) {
+            allViews.forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId)?.classList.add('active');
         }
-
         window.showDashboardView = function() {
             activeSemesterIndex = -1;
-            dashboardView.classList.add('active');
-            semesterDetailView.classList.remove('active');
-            searchResultsView.classList.remove('active');
-            if (searchInput.value) { searchInput.value = ''; }
+            activeCourseIndex = -1;
+            switchView('dashboard-view');
             renderDashboard();
+            renderBreadcrumbs();
         }
-
         window.showSemesterView = function(semesterIndex) {
             activeSemesterIndex = semesterIndex;
-            dashboardView.classList.remove('active');
-            semesterDetailView.classList.add('active');
-            searchResultsView.classList.remove('active');
+            activeCourseIndex = -1;
+            switchView('semester-detail-view');
             renderSemesterDetail(semesterIndex);
+            renderBreadcrumbs();
+        }
+        window.showCourseView = function(semesterIndex, courseIndex) {
+            activeSemesterIndex = semesterIndex;
+            activeCourseIndex = courseIndex;
+            switchView('course-detail-view');
+            renderCourseDetail(semesterIndex, courseIndex);
+            renderBreadcrumbs();
+        }
+        
+        function renderBreadcrumbs() {
+            let html = `<a href="#" onclick="showDashboardView()" class="hover:text-indigo-600">Home</a>`;
+            if (activeSemesterIndex > -1) {
+                const semester = academicData[activeSemesterIndex];
+                html += `<span class="text-gray-400 mx-2">&gt;</span> <a href="#" onclick="showSemesterView(${activeSemesterIndex})" class="hover:text-indigo-600">${semester.name}</a>`;
+            }
+            if (activeCourseIndex > -1) {
+                const course = academicData[activeSemesterIndex].courses[activeCourseIndex];
+                html += `<span class="text-gray-400 mx-2">&gt;</span> <span class="font-semibold text-gray-700">${course.name}</span>`;
+            }
+            breadcrumbEl.innerHTML = html;
+        }
+
+        function renderDashboard() {
+            const dashboardEl = document.getElementById('dashboard-view');
+            const semestersGridHTML = academicData.length > 0 ? academicData.map((semester, index) => {
+                const courseCount = (semester.courses || []).length;
+                return `<div onclick="showSemesterView(${index})" class="group bg-white p-6 rounded-xl shadow-lg border-2 border-transparent hover:border-indigo-500 transition-all cursor-pointer">
+                            <h3 class="text-xl font-bold text-gray-800">${semester.name}</h3>
+                            <p class="text-gray-500 mt-2">${courseCount} course${courseCount === 1 ? '' : 's'}</p>
+                        </div>`;
+            }).join('') : `<p class="text-center col-span-full text-gray-500">Loading semesters...</p>`;
+            dashboardEl.innerHTML = `
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 md:p-12 rounded-xl text-white mb-12 shadow-lg text-center">
+                    <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Welcome to FastDocs</h2>
+                    <p class="text-indigo-100 text-lg max-w-2xl mx-auto mb-8">Your central hub for academic resources at FAST CFD.</p>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">All Semesters</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">${semestersGridHTML}</div>`;
+        }
+        
+        function renderSemesterDetail(semesterIndex) {
+            const semester = academicData[semesterIndex];
+            const semesterDetailEl = document.getElementById('semester-detail-view');
+            const coursesListHTML = (semester.courses && semester.courses.length > 0) ? semester.courses.map((course, courseIndex) => `
+                <div class="bg-white rounded-lg shadow-md hover:shadow-xl hover:scale-[1.02] transition-all">
+                     <a href="#" onclick="showCourseView(${semesterIndex}, ${courseIndex})" class="block p-6">
+                        <h3 class="text-xl font-semibold text-indigo-700">${course.name}</h3>
+                     </a>
+                </div>
+            `).join('') : `<div class="bg-white rounded-lg p-10 text-center text-gray-500 shadow-sm">No courses found for this semester.</div>`;
+            semesterDetailEl.innerHTML = `
+                <div class="text-center bg-white p-6 rounded-xl shadow-md border-2 border-indigo-200 mb-10">
+                    <h2 class="text-4xl font-extrabold text-indigo-600">${semester.name}</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${coursesListHTML}</div>`;
+        }
+        
+        // **THIS FUNCTION IS NOW UPDATED TO ONLY SHOW A PREVIEW BUTTON**
+        function renderCourseDetail(semesterIndex, courseIndex) {
+            const course = academicData[semesterIndex].courses[courseIndex];
+            const courseDetailEl = document.getElementById('course-detail-view');
+            const sectionsHTML = (course.sections && course.sections.length > 0) ? course.sections.map(section => {
+                const createDocList = (docs) => (docs || []).map(doc => `
+                    <li class="flex items-center justify-between p-2.5 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                        <div class="flex items-center truncate mr-4">
+                            ${getFileIcon(doc.name)}
+                            <span class="font-medium text-gray-800 truncate">${doc.name}</span>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full shadow-sm transition-colors">
+                                Open
+                            </a>
+                        </div>
+                    </li>`).join('');
+
+                const directDocsHTML = createDocList(section.documents);
+                const subfoldersHTML = (section.subfolders || []).map(sub => {
+                    const subDocsHTML = createDocList(sub.items);
+                    if (!subDocsHTML) return '';
+                    return `<div class="mt-4">
+                                <h5 class="font-semibold text-gray-600 px-2 mb-2">${sub.name}</h5>
+                                <ul class="space-y-1">${subDocsHTML}</ul>
+                            </div>`;
+                }).join('');
+
+                if (!directDocsHTML && !subfoldersHTML) return '';
+                return `<div class="bg-gray-50 p-4 rounded-lg shadow-inner border">
+                            <h4 class="font-bold text-gray-800 mb-3 text-lg">${section.name}</h4>
+                            <ul class="space-y-1">${directDocsHTML}</ul>
+                            ${subfoldersHTML}
+                        </div>`;
+            }).join('') : '<p class="col-span-full text-center text-gray-500">No materials have been uploaded for this course yet.</p>';
+
+            courseDetailEl.innerHTML = `
+                <div class="text-center bg-white p-6 rounded-xl shadow-md border-2 border-gray-200 mb-10">
+                    <h2 class="text-4xl font-extrabold text-gray-800">${course.name}</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">${sectionsHTML}</div>
+            `;
         }
 
         function getFileIcon(filename) {
@@ -194,87 +255,8 @@
                 case 'pdf': return '<svg class="h-6 w-6 mr-3 text-red-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
                 case 'pptx': case 'ppt': return '<svg class="h-6 w-6 mr-3 text-orange-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm-2 5V6a2 2 0 114 0v1H8z" /></svg>';
                 case 'docx': case 'doc': return '<svg class="h-6 w-6 mr-3 text-blue-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
-                default: return '<svg class="h-6 w-6 mr-3 text-gray-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
+                default: return '<svg class="h-6 w-6 mr-3 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
             }
-        }
-        function renderDashboard() {
-            const grid = document.getElementById('semesters-grid');
-            grid.innerHTML = '<div class="loader"></div>';
-            if (academicData.length > 0) {
-                grid.innerHTML = academicData.map((semester, index) => {
-                    const courseCount = (semester.courses || []).length;
-                    return `<div onclick="showSemesterView(${index})" class="group bg-white p-6 rounded-xl shadow-lg border-2 border-transparent hover:border-indigo-500 transition-all cursor-pointer">
-                                <h3 class="text-xl font-bold text-gray-800">${semester.name}</h3>
-                                <p class="text-gray-500 mt-2">${courseCount} course${courseCount === 1 ? '' : 's'}</p>
-                            </div>`;
-                }).join('');
-            } else {
-                grid.innerHTML = `<p class="text-center col-span-full text-gray-500">No semesters found. The admin may need to add content.</p>`;
-            }
-        }
-
-        // THIS FUNCTION CONTAINS THE NEW HEADING STYLES
-        function renderSemesterDetail(semesterIndex) {
-            const content = document.getElementById('semester-detail-content');
-            const semester = academicData[semesterIndex];
-            
-            let coursesHTML = '';
-            if (semester.courses && semester.courses.length > 0) {
-                coursesHTML = semester.courses.map((course) => {
-                    let hasContent = false;
-                    const sectionsHTML = (course.sections || []).map((section) => {
-                        const createDocList = (docs) => (docs || []).map(doc => `
-                            <li>
-                                <a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="flex items-center text-indigo-700 hover:text-indigo-900 hover:bg-indigo-50 p-2.5 rounded-lg transition-colors duration-200">
-                                    ${getFileIcon(doc.name)}
-                                    <span class="font-medium">${doc.name}</span>
-                                </a>
-                            </li>`).join('');
-
-                        const directDocsHTML = createDocList(section.documents);
-                        const subfoldersHTML = (section.subfolders || []).map(sub => {
-                            const subDocsHTML = createDocList(sub.items);
-                            if (!subDocsHTML) return '';
-                            hasContent = true;
-                            return `<div class="mt-4">
-                                        <h5 class="font-semibold text-gray-600 px-2 mb-2">${sub.name}</h5>
-                                        <ul class="space-y-1">${subDocsHTML}</ul>
-                                    </div>`;
-                        }).join('');
-
-                        if (!directDocsHTML && !subfoldersHTML) return '';
-                        hasContent = true;
-                        return `<div class="bg-gray-50 p-4 rounded-lg shadow-inner border">
-                                    <h4 class="font-bold text-gray-800 mb-3 text-lg">${section.name}</h4>
-                                    <ul class="space-y-1">${directDocsHTML}</ul>
-                                    ${subfoldersHTML}
-                                </div>`;
-                    }).join('');
-
-                    if (!hasContent) return '';
-
-                    return `<div class="bg-white rounded-xl shadow-lg mb-8 p-6">
-                                <div class="text-center border-b-2 border-gray-200 pb-4 mb-6">
-                                    <h3 class="text-2xl font-bold text-gray-900">${course.name}</h3>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    ${sectionsHTML}
-                                </div>
-                            </div>`;
-                }).join('');
-            }
-            
-            if (!coursesHTML) {
-                coursesHTML = `<div class="text-center py-16 bg-white rounded-lg shadow-sm"><p class="text-gray-500">No courses with content have been added to this semester yet.</p></div>`;
-            }
-
-            const semesterHeadingHTML = `
-                <div class="text-center bg-white p-6 rounded-xl shadow-md border-2 border-indigo-200 mb-10">
-                    <h2 class="text-4xl font-extrabold text-indigo-600">${semester.name}</h2>
-                </div>
-            `;
-
-            content.innerHTML = `${semesterHeadingHTML}<div>${coursesHTML}</div>`;
         }
         
         showDashboardView();
