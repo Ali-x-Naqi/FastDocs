@@ -12,40 +12,32 @@
         .view.active { display: block; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #6366f1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 4rem auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .course-accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
 
-    <!-- Updated Header: Aligned Home and About links to the right -->
     <header class="bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-40">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
-                <!-- Logo on the left -->
                 <a href="#" onclick="showDashboardView()" class="flex items-center space-x-2">
                     <svg class="h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                     </svg>
                     <h1 class="text-2xl font-bold text-indigo-600">FastDocs</h1>
                 </a>
-                <!-- Navigation links aligned to the right -->
                 <nav class="flex items-center space-x-8">
                     <a href="#" onclick="showDashboardView()" class="font-medium text-gray-600 hover:text-indigo-600">Home</a>
                     <a href="about.html" class="font-medium text-gray-600 hover:text-indigo-600">About</a>
                 </nav>
-                <div id="breadcrumb" class="text-sm font-medium text-gray-500 hidden md:block"></div>
             </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <!-- Dashboard View -->
         <div id="dashboard-view" class="view active">
-            <!-- Hero Section -->
             <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 md:p-12 rounded-xl text-white mb-12 shadow-lg text-center">
                 <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Welcome to FastDocs</h2>
                 <p class="text-indigo-100 text-lg max-w-2xl mx-auto mb-8">A resource hub for FAST CFD, created by Ali Naqi.</p>
-                <!-- Functional Search Bar -->
                 <div class="max-w-xl mx-auto">
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -57,12 +49,9 @@
             </div>
             
             <h3 class="text-2xl font-bold text-gray-900 mb-6">University Semesters</h3>
-            <div id="semesters-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Semester cards will be injected here -->
-            </div>
+            <div id="semesters-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
         </div>
 
-        <!-- Semester Detail View -->
         <div id="semester-detail-view" class="view">
             <div class="flex items-center mb-6">
                 <button onclick="showDashboardView()" class="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center">
@@ -70,15 +59,10 @@
                     All Semesters
                 </button>
             </div>
-            <div id="semester-detail-content">
-                <!-- Specific semester content will be injected here -->
-            </div>
+            <div id="semester-detail-content"></div>
         </div>
         
-        <!-- Search Results View -->
-        <div id="search-results-view" class="view">
-            <!-- Search results will be injected here -->
-        </div>
+        <div id="search-results-view" class="view"></div>
     </main>
     
     <footer class="bg-white text-gray-800 mt-12 border-t">
@@ -113,14 +97,12 @@
             appId: "1:1017573179316:web:7d011bede8b91d42013ce1",
             measurementId: "G-1BS4ERVGYK"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         let academicData = [];
         let activeSemesterIndex = -1;
 
-        const breadcrumbEl = document.getElementById('breadcrumb');
         const dashboardView = document.getElementById('dashboard-view');
         const semesterDetailView = document.getElementById('semester-detail-view');
         const searchInput = document.getElementById('search-input');
@@ -137,58 +119,34 @@
 
         function performSearch() {
             const query = searchInput.value.toLowerCase().trim();
-            if (query === '') {
-                showDashboardView();
-                return;
-            }
-
+            if (query === '') { showDashboardView(); return; }
             dashboardView.classList.remove('active');
             semesterDetailView.classList.remove('active');
             searchResultsView.classList.add('active');
-
             const results = [];
             academicData.forEach(semester => {
-                semester.courses.forEach(course => {
+                (semester.courses || []).forEach(course => {
                     let courseMatch = course.name.toLowerCase().includes(query);
-                    
-                    const checkDocuments = (docArray, parentName) => {
-                        if (!docArray) return;
-                        docArray.forEach(doc => {
-                            if (courseMatch || doc.name.toLowerCase().includes(query)) {
-                                results.push({
-                                    semesterName: semester.name,
-                                    courseName: course.name,
-                                    docName: doc.name,
-                                    docUrl: doc.url,
-                                    category: parentName
-                                });
-                            }
-                        });
-                    };
-
-                    checkDocuments(course.notes, 'Notes');
-                    checkDocuments(course.slides, 'Slides');
-                    checkDocuments(course.quizzes, 'Quizzes');
-                    checkDocuments(course.assignments, 'Assignments');
-                    
-                    if (course.pastPapers) {
-                        checkDocuments(course.pastPapers['MID 1'], 'Past Papers (MID 1)');
-                        checkDocuments(course.pastPapers['MID 2'], 'Past Papers (MID 2)');
-                        checkDocuments(course.pastPapers['FINAL'], 'Past Papers (FINAL)');
-                    }
+                    (course.sections || []).forEach(section => {
+                        const checkDocs = (docs, subfolderName = null) => {
+                            (docs || []).forEach(doc => {
+                                if (courseMatch || section.name.toLowerCase().includes(query) || doc.name.toLowerCase().includes(query)) {
+                                    let categoryPath = `${section.name}`;
+                                    if (subfolderName) categoryPath += ` / ${subfolderName}`;
+                                    results.push({ semesterName: semester.name, courseName: course.name, docName: doc.name, docUrl: doc.url, category: categoryPath });
+                                }
+                            });
+                        };
+                        checkDocs(section.documents);
+                        (section.subfolders || []).forEach(sub => checkDocs(sub.items, sub.name));
+                    });
                 });
             });
-            
             const uniqueResults = Array.from(new Set(results.map(JSON.stringify))).map(JSON.parse);
             renderSearchResults(uniqueResults, query);
         }
-
-        searchInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                performSearch();
-            }
-        });
-
+        searchInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { performSearch(); } });
+        
         function renderSearchResults(results, query) {
             let html = `<h2 class="text-3xl font-bold text-gray-900 mb-8">Search Results for "${query}"</h2>`;
             if (results.length === 0) {
@@ -202,7 +160,7 @@
                                 ${getFileIcon(result.docName)}
                                 <div>
                                     <p class="font-semibold text-blue-700">${result.docName}</p>
-                                    <p class="text-sm text-gray-500">${result.semesterName} > ${result.courseName} > ${result.category}</p>
+                                    <p class="text-sm text-gray-500">${result.semesterName} &gt; ${result.courseName} &gt; ${result.category}</p>
                                 </div>
                             </div>
                         </a>
@@ -218,10 +176,7 @@
             dashboardView.classList.add('active');
             semesterDetailView.classList.remove('active');
             searchResultsView.classList.remove('active');
-            breadcrumbEl.innerHTML = '';
-            if (searchInput.value) {
-                searchInput.value = '';
-            }
+            if (searchInput.value) { searchInput.value = ''; }
             renderDashboard();
         }
 
@@ -232,111 +187,94 @@
             searchResultsView.classList.remove('active');
             renderSemesterDetail(semesterIndex);
         }
-        
-        window.toggleAccordion = function(element) {
-            const content = element.nextElementSibling;
-            const icon = element.querySelector('.accordion-icon');
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                content.style.maxHeight = content.scrollHeight + "px";
-                icon.style.transform = 'rotate(180deg)';
-            }
-        }
 
         function getFileIcon(filename) {
             const extension = filename.split('.').pop().toLowerCase();
             switch(extension) {
-                case 'pdf': return '<svg class="h-5 w-5 mr-3 text-red-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
-                case 'pptx': case 'ppt': return '<svg class="h-5 w-5 mr-3 text-orange-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm-2 5V6a2 2 0 114 0v1H8z" /></svg>';
-                case 'docx': case 'doc': return '<svg class="h-5 w-5 mr-3 text-blue-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
-                default: return '<svg class="h-5 w-5 mr-3 text-gray-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
+                case 'pdf': return '<svg class="h-6 w-6 mr-3 text-red-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
+                case 'pptx': case 'ppt': return '<svg class="h-6 w-6 mr-3 text-orange-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm-2 5V6a2 2 0 114 0v1H8z" /></svg>';
+                case 'docx': case 'doc': return '<svg class="h-6 w-6 mr-3 text-blue-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
+                default: return '<svg class="h-6 w-6 mr-3 text-gray-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>';
             }
         }
-
         function renderDashboard() {
             const grid = document.getElementById('semesters-grid');
             grid.innerHTML = '<div class="loader"></div>';
             if (academicData.length > 0) {
-                grid.innerHTML = '';
-                academicData.forEach((semester, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'group bg-white p-6 rounded-xl shadow-lg border-2 border-transparent hover:border-indigo-500 transition-all cursor-pointer';
-                    card.onclick = () => showSemesterView(index);
-                    card.innerHTML = `<h3 class="text-xl font-bold text-gray-800">${semester.name}</h3><p class="text-gray-500 mt-2">${semester.courses.length} courses</p>`;
-                    grid.appendChild(card);
-                });
-            } else if (!academicData.length) {
+                grid.innerHTML = academicData.map((semester, index) => {
+                    const courseCount = (semester.courses || []).length;
+                    return `<div onclick="showSemesterView(${index})" class="group bg-white p-6 rounded-xl shadow-lg border-2 border-transparent hover:border-indigo-500 transition-all cursor-pointer">
+                                <h3 class="text-xl font-bold text-gray-800">${semester.name}</h3>
+                                <p class="text-gray-500 mt-2">${courseCount} course${courseCount === 1 ? '' : 's'}</p>
+                            </div>`;
+                }).join('');
+            } else {
                 grid.innerHTML = `<p class="text-center col-span-full text-gray-500">No semesters found. The admin may need to add content.</p>`;
             }
         }
 
+        // THIS FUNCTION CONTAINS THE NEW HEADING STYLES
         function renderSemesterDetail(semesterIndex) {
             const content = document.getElementById('semester-detail-content');
             const semester = academicData[semesterIndex];
-            breadcrumbEl.innerHTML = `<span><span class="font-light text-gray-400">/</span> ${semester.name}</span>`;
             
             let coursesHTML = '';
-            if (semester.courses.length > 0) {
-                semester.courses.forEach((course) => {
-                    let categoriesHTML = '';
-                    const categories = {
-                        notes: 'Notes', 
-                        slides: 'Slides', 
-                        quizzes: 'Quizzes', 
-                        assignments: 'Assignments'
-                    };
-                    
-                    Object.entries(categories).forEach(([key, displayName]) => {
-                        if (course[key] && course[key].length > 0) {
-                            const docsList = course[key].map(doc => `
-                                <li>
-                                    <a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="flex items-center text-blue-700 hover:text-blue-900 hover:bg-blue-50 p-2 rounded-md transition-colors">
-                                        ${getFileIcon(doc.name)}
-                                        <span class="truncate">${doc.name}</span>
-                                    </a>
-                                </li>`).join('');
-                            categoriesHTML += `<div class="mb-4"><h4 class="font-semibold text-gray-600 mb-2">${displayName}</h4><ul class="space-y-1">${docsList}</ul></div>`;
-                        }
-                    });
-                    
-                    if (course.pastPapers) {
-                        let pastPapersContent = '';
-                        const pastPapersCategories = ['MID 1', 'MID 2', 'FINAL'];
-                        pastPapersCategories.forEach(term => {
-                            if (course.pastPapers[term] && course.pastPapers[term].length > 0) {
-                                const docsList = course.pastPapers[term].map(doc => `
-                                    <li>
-                                        <a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="flex items-center text-blue-700 hover:text-blue-900 hover:bg-blue-50 p-2 rounded-md transition-colors">
-                                            ${getFileIcon(doc.name)}
-                                            <span class="truncate">${doc.name}</span>
-                                        </a>
-                                    </li>`).join('');
-                                pastPapersContent += `<div class="mb-4"><h5 class="font-medium text-gray-600 pl-4 mb-2">${term}</h5><ul class="space-y-1">${docsList}</ul></div>`;
-                            }
-                        });
-                        if(pastPapersContent){
-                            categoriesHTML += `<div class="mb-4"><h4 class="font-semibold text-gray-600 mb-2">Past Papers</h4>${pastPapersContent}</div>`;
-                        }
-                    }
+            if (semester.courses && semester.courses.length > 0) {
+                coursesHTML = semester.courses.map((course) => {
+                    let hasContent = false;
+                    const sectionsHTML = (course.sections || []).map((section) => {
+                        const createDocList = (docs) => (docs || []).map(doc => `
+                            <li>
+                                <a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="flex items-center text-indigo-700 hover:text-indigo-900 hover:bg-indigo-50 p-2.5 rounded-lg transition-colors duration-200">
+                                    ${getFileIcon(doc.name)}
+                                    <span class="font-medium">${doc.name}</span>
+                                </a>
+                            </li>`).join('');
 
-                    if (categoriesHTML) {
-                        coursesHTML += `
-                            <div class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
-                                <button onclick="toggleAccordion(this)" class="w-full flex justify-between items-center text-left p-5 bg-white hover:bg-gray-50 transition-colors">
-                                    <h3 class="text-lg font-semibold text-gray-800">${course.name}</h3>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 accordion-icon transition-transform text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                                </button>
-                                <div class="course-accordion-content"><div class="px-5 pb-5 pt-2 border-t">${categoriesHTML}</div></div>
+                        const directDocsHTML = createDocList(section.documents);
+                        const subfoldersHTML = (section.subfolders || []).map(sub => {
+                            const subDocsHTML = createDocList(sub.items);
+                            if (!subDocsHTML) return '';
+                            hasContent = true;
+                            return `<div class="mt-4">
+                                        <h5 class="font-semibold text-gray-600 px-2 mb-2">${sub.name}</h5>
+                                        <ul class="space-y-1">${subDocsHTML}</ul>
+                                    </div>`;
+                        }).join('');
+
+                        if (!directDocsHTML && !subfoldersHTML) return '';
+                        hasContent = true;
+                        return `<div class="bg-gray-50 p-4 rounded-lg shadow-inner border">
+                                    <h4 class="font-bold text-gray-800 mb-3 text-lg">${section.name}</h4>
+                                    <ul class="space-y-1">${directDocsHTML}</ul>
+                                    ${subfoldersHTML}
+                                </div>`;
+                    }).join('');
+
+                    if (!hasContent) return '';
+
+                    return `<div class="bg-white rounded-xl shadow-lg mb-8 p-6">
+                                <div class="text-center border-b-2 border-gray-200 pb-4 mb-6">
+                                    <h3 class="text-2xl font-bold text-gray-900">${course.name}</h3>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    ${sectionsHTML}
+                                </div>
                             </div>`;
-                    }
-                });
-            } else {
-                coursesHTML = `<div class="text-center py-16 bg-white rounded-lg shadow-sm"><p class="text-gray-500">No courses have been added to this semester yet.</p></div>`;
+                }).join('');
+            }
+            
+            if (!coursesHTML) {
+                coursesHTML = `<div class="text-center py-16 bg-white rounded-lg shadow-sm"><p class="text-gray-500">No courses with content have been added to this semester yet.</p></div>`;
             }
 
-            content.innerHTML = `<h2 class="text-3xl font-bold text-gray-900 mb-8">${semester.name} Courses</h2><div class="space-y-4">${coursesHTML}</div>`;
+            const semesterHeadingHTML = `
+                <div class="text-center bg-white p-6 rounded-xl shadow-md border-2 border-indigo-200 mb-10">
+                    <h2 class="text-4xl font-extrabold text-indigo-600">${semester.name}</h2>
+                </div>
+            `;
+
+            content.innerHTML = `${semesterHeadingHTML}<div>${coursesHTML}</div>`;
         }
         
         showDashboardView();

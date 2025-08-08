@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin: Academic Resource Manager</title>
+    <title>Admin: FastDocs Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -12,129 +12,27 @@
         .view.active { display: block; }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 50; justify-content: center; align-items: center; }
         .modal-content { background-color: white; padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 500px; }
-        .course-category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
     </style>
 </head>
 <body class="bg-gray-100">
 
-    <!-- Teshkhkt Admin Login Form (initially shown) -->
-    <div id="login-form-container" class="view active">
-        <div class="max-w-md mx-auto mt-24 p-8 bg-white rounded-lg shadow-xl">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Admin Login</h2>
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="email-input" class="block text-sm font-medium text-gray-700">Email address</label>
-                    <input id="email-input" type="email" autocomplete="email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="password-input" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input id="password-input" type="password" autocomplete="current-password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                    Sign in
-                </button>
-            </form>
-        </div>
-    </div>
+    <div id="login-form-container" class="view active"><div class="max-w-md mx-auto mt-24 p-8 bg-white rounded-lg shadow-xl"><h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Admin Login</h2><form id="login-form" class="space-y-6"><div><label for="email-input" class="block text-sm font-medium text-gray-700">Email address</label><input id="email-input" type="email" autocomplete="email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password-input" class="block text-sm font-medium text-gray-700">Password</label><input id="password-input" type="password" autocomplete="current-password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></div><button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Sign in</button></form></div></div>
 
-    <!-- Admin Panel Content (initially hidden) -->
     <div id="admin-panel-content" class="view">
-        <header class="bg-gray-800 text-white shadow-lg">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold leading-tight">ADMIN PANEL</h1>
-                    <p class="text-gray-400 mt-1">Manage Semesters, Courses, and Files</p>
-                </div>
-                <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Logout</button>
-            </div>
-        </header>
-
+        <header class="bg-gray-800 text-white shadow-lg"><div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center"><div><h1 class="text-3xl font-bold leading-tight">ADMIN PANEL</h1><p class="text-gray-400 mt-1">Manage Semesters, Courses, and Files</p></div><button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Logout</button></div></header>
         <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <!-- Dashboard View -->
-            <div id="dashboard-view" class="view active">
-                <!-- Stats Bar -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <h4 class="text-sm font-medium text-gray-500">Total Semesters</h4>
-                        <p id="stats-semesters" class="text-3xl font-bold text-gray-900">0</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <h4 class="text-sm font-medium text-gray-500">Total Courses</h4>
-                        <p id="stats-courses" class="text-3xl font-bold text-gray-900">0</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <h4 class="text-sm font-medium text-gray-500">Total Documents</h4>
-                        <p id="stats-documents" class="text-3xl font-bold text-gray-900">0</p>
-                    </div>
-                </div>
-
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Semesters Dashboard</h2>
-                <div id="semesters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Semester cards will be injected here -->
-                </div>
-            </div>
-
-            <!-- Semester Detail View -->
-            <div id="semester-detail-view" class="view">
-                <div class="flex items-center mb-6">
-                    <button onclick="showDashboardView()" class="text-blue-600 hover:underline">&larr; Back to Dashboard</button>
-                </div>
-                <div id="semester-detail-content">
-                    <!-- Specific semester content will be injected here -->
-                </div>
-            </div>
+            <div id="dashboard-view" class="view active"><div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"><div class="bg-white p-6 rounded-lg shadow"><h4 class="text-sm font-medium text-gray-500">Total Semesters</h4><p id="stats-semesters" class="text-3xl font-bold text-gray-900">0</p></div><div class="bg-white p-6 rounded-lg shadow"><h4 class="text-sm font-medium text-gray-500">Total Courses</h4><p id="stats-courses" class="text-3xl font-bold text-gray-900">0</p></div><div class="bg-white p-6 rounded-lg shadow"><h4 class="text-sm font-medium text-gray-500">Total Documents</h4><p id="stats-documents" class="text-3xl font-bold text-gray-900">0</p></div></div><h2 class="text-2xl font-bold text-gray-800 mb-6">Semesters Dashboard</h2><div id="semesters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div></div>
+            <div id="semester-detail-view" class="view"><div id="semester-detail-content"></div></div>
         </main>
     </div>
 
-    <!-- Modals -->
-    <div id="course-modal" class="modal-backdrop">
-        <div class="modal-content">
-            <h3 class="text-2xl font-bold mb-4">Add New Course</h3>
-            <input id="course-name-input" type="text" placeholder="e.g., Data Structures" class="w-full p-2 border rounded mb-4">
-            <div class="flex justify-end space-x-3">
-                <button onclick="closeModal('course')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
-                <button onclick="addCourse()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Course</button>
-            </div>
-        </div>
-    </div>
+    <div id="course-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Course</h3><input id="course-name-input" type="text" placeholder="e.g., Data Structures" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal()" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addCourse()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Course</button></div></div></div>
+    <div id="section-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Section</h3><input id="section-name-input" type="text" placeholder="e.g., Labs or Books" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal()" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addSection()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Section</button></div></div></div>
+    <div id="subfolder-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Sub-folder</h3><input id="subfolder-name-input" type="text" placeholder="e.g., MID 1 or Chapter 1" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal()" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addSubfolder()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Sub-folder</button></div></div></div>
+    <div id="document-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Add New Document</h3><p class="mb-2">Uploading to: <strong id="upload-target-info"></strong></p><input id="document-name-input" type="text" placeholder="File Name (e.g., Lecture 1.pdf)" class="w-full p-2 border rounded mb-2"><input id="document-url-input" type="text" placeholder="Google Drive Share URL" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal()" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="addDocument()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Document</button></div></div></div>
+    <div id="rename-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-2xl font-bold mb-4">Rename Item</h3><input id="rename-input" type="text" class="w-full p-2 border rounded mb-4"><div class="flex justify-end space-x-3"><button onclick="closeModal()" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button onclick="renameItem()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Rename</button></div></div></div>
+    <div id="confirm-modal" class="modal-backdrop"><div class="modal-content"><h3 class="text-xl font-bold mb-4">Are you sure?</h3><p id="confirm-modal-text" class="text-gray-600 mb-6">This action cannot be undone.</p><div class="flex justify-end space-x-3"><button id="confirm-cancel-btn" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button><button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Delete</button></div></div></div>
     
-    <div id="document-modal" class="modal-backdrop">
-        <div class="modal-content">
-            <h3 class="text-2xl font-bold mb-4">Add New Document</h3>
-            <p class="mb-2">Uploading to: <strong id="upload-target-info"></strong></p>
-            <input id="document-name-input" type="text" placeholder="File Name (e.g., Lecture 1.pdf)" class="w-full p-2 border rounded mb-2">
-            <input id="document-url-input" type="text" placeholder="Google Drive Share URL" class="w-full p-2 border rounded mb-4">
-            <div class="flex justify-end space-x-3">
-                <button onclick="closeModal('document')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
-                <button onclick="addDocument()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Add Document</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Custom Confirmation Modal -->
-    <div id="confirm-modal" class="modal-backdrop">
-        <div class="modal-content">
-            <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
-            <p id="confirm-modal-text" class="text-gray-600 mb-6">This action cannot be undone.</p>
-            <div class="flex justify-end space-x-3">
-                <button id="confirm-cancel-btn" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
-                <button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Delete</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rename Document Modal -->
-    <div id="rename-modal" class="modal-backdrop">
-        <div class="modal-content">
-            <h3 class="text-2xl font-bold mb-4">Rename Document</h3>
-            <input id="rename-name-input" type="text" placeholder="New File Name" class="w-full p-2 border rounded mb-4">
-            <div class="flex justify-end space-x-3">
-                <button onclick="closeModal('rename')" class="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
-                <button onclick="renameDocument()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Rename</button>
-            </div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
@@ -157,37 +55,20 @@
         let academicData = [];
         let activeSemesterIndex = -1;
         let currentCourseIndex = -1;
-        let currentCategory = '';
-        let currentDocIndex = -1; // New variable to store the document index
+        let currentSectionIndex = -1;
+        let currentSubfolderIndex = -1;
         let confirmCallback = null;
+        let renameContext = {};
 
         const loginFormContainer = document.getElementById('login-form-container');
         const adminPanelContent = document.getElementById('admin-panel-content');
-        const loginForm = document.getElementById('login-form');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        // Auth State Listener with Role Check
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists() && userDoc.data().role === 'admin') {
                     adminPanelContent.style.display = 'block';
                     loginFormContainer.style.display = 'none';
-                    
-                    onSnapshot(collection(db, "academicData"), (snapshot) => {
-                        if (snapshot.empty) {
-                            const initialData = Array.from({ length: 8 }, (_, i) => ({ 
-                                id: `semester-${i + 1}`, 
-                                name: `Semester ${i + 1}`, 
-                                courses: [] 
-                            }));
-                            Promise.all(initialData.map(sem => setDoc(doc(db, "academicData", sem.id), sem)));
-                        } else {
-                            academicData = snapshot.docs.map(doc => doc.data()).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-                            renderDashboard();
-                            if (activeSemesterIndex !== -1) renderSemesterDetail(activeSemesterIndex);
-                        }
-                    });
+                    initializeDataListener();
                 } else {
                     alert("You do not have permission to access this page.");
                     await signOut(auth);
@@ -197,29 +78,34 @@
                 loginFormContainer.style.display = 'block';
             }
         });
-
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const email = document.getElementById('email-input').value;
-            const password = document.getElementById('password-input').value;
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-                console.log("Login attempt successful. Checking role...");
+                await signInWithEmailAndPassword(auth, document.getElementById('email-input').value, document.getElementById('password-input').value);
             } catch (error) {
-                console.error("Login failed:", error.message);
                 alert("Login failed: " + error.message);
             }
         });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                console.log("Admin logged out successfully.");
-            } catch (error) {
-                console.error("Logout failed:", error.message);
-            }
-        });
+        function initializeDataListener() {
+            onSnapshot(collection(db, "academicData"), (snapshot) => {
+                if (snapshot.empty) {
+                    const initialData = Array.from({ length: 8 }, (_, i) => ({ id: `semester-${i + 1}`, name: `Semester ${i + 1}`, courses: [] }));
+                    Promise.all(initialData.map(sem => setDoc(doc(db, "academicData", sem.id), sem)));
+                } else {
+                    academicData = snapshot.docs.map(doc => doc.data()).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+                    renderDashboard();
+                    if (activeSemesterIndex !== -1) renderSemesterDetail(activeSemesterIndex);
+                }
+            });
+        }
 
+        async function updateSemesterData() {
+            if (activeSemesterIndex === -1) return;
+            const semester = academicData[activeSemesterIndex];
+            await setDoc(doc(db, "academicData", semester.id), semester);
+        }
 
         const confirmModal = document.getElementById('confirm-modal');
         document.getElementById('confirm-cancel-btn').onclick = () => confirmModal.style.display = 'none';
@@ -227,213 +113,248 @@
             if (confirmCallback) confirmCallback();
             confirmModal.style.display = 'none';
         };
-
-        window.showDashboardView = function() {
+        
+        window.showDashboardView = () => {
             activeSemesterIndex = -1;
             document.getElementById('dashboard-view').classList.add('active');
             document.getElementById('semester-detail-view').classList.remove('active');
-        }
-
-        window.showSemesterView = function(semesterIndex) {
-            activeSemesterIndex = semesterIndex;
+        };
+        window.showSemesterView = (index) => {
+            activeSemesterIndex = index;
             document.getElementById('dashboard-view').classList.remove('active');
             document.getElementById('semester-detail-view').classList.add('active');
-            renderSemesterDetail(semesterIndex);
-        }
-
-        window.openModal = function(type, courseIndex, category) {
+            renderSemesterDetail(index);
+        };
+        window.openModal = (type, courseIdx, sectionIdx, subfolderIdx) => {
+            currentCourseIndex = courseIdx;
+            currentSectionIndex = sectionIdx;
+            currentSubfolderIndex = subfolderIdx;
             if (type === 'document') {
-                currentCourseIndex = courseIndex;
-                currentCategory = category;
-                document.getElementById('upload-target-info').innerText = `${academicData[activeSemesterIndex].courses[courseIndex].name} / ${category}`;
+                const course = academicData[activeSemesterIndex].courses[courseIdx];
+                const section = course.sections[sectionIdx];
+                let path = `${course.name} / ${section.name}`;
+                if (subfolderIdx !== undefined && subfolderIdx !== null) {
+                    path += ` / ${section.subfolders[subfolderIdx].name}`;
+                }
+                document.getElementById('upload-target-info').innerText = path;
             }
             document.getElementById(`${type}-modal`).style.display = 'flex';
-        }
-
-        window.openRenameModal = function(courseIndex, category, docIndex) {
-            currentCourseIndex = courseIndex;
-            currentCategory = category;
-            currentDocIndex = docIndex;
-            
-            let currentDoc;
-            if (category.includes('pastPapers-')) {
-                const subCategory = category.split('-')[1];
-                currentDoc = academicData[activeSemesterIndex].courses[courseIndex].pastPapers[subCategory][docIndex];
-            } else {
-                currentDoc = academicData[activeSemesterIndex].courses[courseIndex][category][docIndex];
+        };
+        window.openRenameModal = (context) => {
+            renameContext = context;
+            const { type, courseIdx, sectionIdx, subfolderIdx, docIdx } = context;
+            const course = academicData[activeSemesterIndex].courses[courseIdx];
+            let currentName = '';
+            if (type === 'course') currentName = course.name;
+            else if (type === 'section') currentName = course.sections[sectionIdx].name;
+            else if (type === 'subfolder') currentName = course.sections[sectionIdx].subfolders[subfolderIdx].name;
+            else if (type === 'document') {
+                const section = course.sections[sectionIdx];
+                const targetArray = (subfolderIdx !== undefined && subfolderIdx !== null) ? section.subfolders[subfolderIdx].items : section.documents;
+                currentName = targetArray[docIdx].name;
             }
-            
-            document.getElementById('rename-name-input').value = currentDoc.name;
+            document.getElementById('rename-input').value = currentName;
             document.getElementById('rename-modal').style.display = 'flex';
-        }
-
-        window.closeModal = function(type) {
-            document.getElementById(`${type}-modal`).style.display = 'none';
-            const nameInput = document.getElementById(`${type}-name-input`);
-            if (nameInput) nameInput.value = '';
-            const urlInput = document.getElementById(`${type}-url-input`);
-            if (urlInput) urlInput.value = '';
-            document.getElementById('rename-name-input').value = '';
-        }
-
-        window.addCourse = async function() {
-            const input = document.getElementById('course-name-input');
-            if (input.value.trim() && activeSemesterIndex > -1) {
-                const semester = academicData[activeSemesterIndex];
-                const newCourse = { 
-                    name: input.value.trim(), 
-                    notes: [], 
-                    pastPapers: { 'MID 1': [], 'MID 2': [], 'FINAL': [] }, 
-                    slides: [], 
-                    quizzes: [], 
-                    assignments: [] 
-                };
-                semester.courses.push(newCourse);
-                await setDoc(doc(db, "academicData", semester.id), semester);
-                closeModal('course');
+        };
+        window.closeModal = () => {
+            Array.from(document.getElementsByClassName('modal-backdrop')).forEach(el => el.style.display = 'none');
+            Array.from(document.querySelectorAll('.modal-content input')).forEach(el => el.value = '');
+        };
+        window.addCourse = async () => {
+            const name = document.getElementById('course-name-input').value.trim();
+            if (name) {
+                const defaultSections = ["Assignments", "Quizzes", "Past Papers", "Notes", "Slides", "Books"];
+                academicData[activeSemesterIndex].courses.push({ 
+                    name, 
+                    sections: defaultSections.map(sName => ({ name: sName, documents: [], subfolders: [] })) 
+                });
+                await updateSemesterData();
+                closeModal();
             }
-        }
-
-        window.addDocument = async function() {
-            const nameInput = document.getElementById('document-name-input');
-            const urlInput = document.getElementById('document-url-input');
-            if (nameInput.value.trim() && urlInput.value.trim() && activeSemesterIndex > -1) {
-                const semester = academicData[activeSemesterIndex];
-                
-                if (currentCategory.includes('pastPapers-')) {
-                    const subCategory = currentCategory.split('-')[1];
-                    semester.courses[currentCourseIndex].pastPapers[subCategory].push({ name: nameInput.value.trim(), url: urlInput.value.trim() });
-                } else {
-                    semester.courses[currentCourseIndex][currentCategory].push({ name: nameInput.value.trim(), url: urlInput.value.trim() });
-                }
-                
-                await setDoc(doc(db, "academicData", semester.id), semester);
-                closeModal('document');
-            }
-        }
-
-        window.renameDocument = async function() {
-            const newName = document.getElementById('rename-name-input').value.trim();
-            if (newName && activeSemesterIndex > -1) {
-                const semester = academicData[activeSemesterIndex];
-
-                if (currentCategory.includes('pastPapers-')) {
-                    const subCategory = currentCategory.split('-')[1];
-                    semester.courses[currentCourseIndex].pastPapers[subCategory][currentDocIndex].name = newName;
-                } else {
-                    semester.courses[currentCourseIndex][currentCategory][currentDocIndex].name = newName;
-                }
-                
-                await setDoc(doc(db, "academicData", semester.id), semester);
-                closeModal('rename');
-            }
-        }
-        
-        window.deleteCourse = function(courseIndex) {
-            document.getElementById('confirm-modal-text').innerText = "This will delete the course and all its documents permanently.";
+        };
+        window.deleteCourse = (courseIdx) => {
+            document.getElementById('confirm-modal-text').innerText = "This will delete the course and all its content permanently.";
             confirmCallback = async () => {
-                const semester = academicData[activeSemesterIndex];
-                semester.courses.splice(courseIndex, 1);
-                await setDoc(doc(db, "academicData", semester.id), semester);
+                academicData[activeSemesterIndex].courses.splice(courseIdx, 1);
+                await updateSemesterData();
             };
             confirmModal.style.display = 'flex';
-        }
-        
-        window.deleteDocument = function(courseIndex, category, docIndex) {
+        };
+        window.addSection = async () => {
+            const name = document.getElementById('section-name-input').value.trim();
+            if (name) {
+                const course = academicData[activeSemesterIndex].courses[currentCourseIndex];
+                if (!course.sections) course.sections = [];
+                course.sections.push({ name, documents: [], subfolders: [] });
+                await updateSemesterData();
+                closeModal();
+            }
+        };
+        window.deleteSection = (courseIdx, sectionIdx) => {
+            document.getElementById('confirm-modal-text').innerText = "This will delete the section and all its content permanently.";
+            confirmCallback = async () => {
+                academicData[activeSemesterIndex].courses[courseIdx].sections.splice(sectionIdx, 1);
+                await updateSemesterData();
+            };
+            confirmModal.style.display = 'flex';
+        };
+        window.addSubfolder = async () => {
+            const name = document.getElementById('subfolder-name-input').value.trim();
+            if (name) {
+                const section = academicData[activeSemesterIndex].courses[currentCourseIndex].sections[currentSectionIndex];
+                if (!section.subfolders) section.subfolders = [];
+                section.subfolders.push({ name, items: [] });
+                await updateSemesterData();
+                closeModal();
+            }
+        };
+        window.deleteSubfolder = (courseIdx, sectionIdx, subfolderIdx) => {
+            document.getElementById('confirm-modal-text').innerText = "This will delete the sub-folder and all its content permanently.";
+            confirmCallback = async () => {
+                academicData[activeSemesterIndex].courses[courseIdx].sections[sectionIdx].subfolders.splice(subfolderIdx, 1);
+                await updateSemesterData();
+            };
+            confirmModal.style.display = 'flex';
+        };
+        window.addDocument = async () => {
+            const name = document.getElementById('document-name-input').value.trim();
+            const url = document.getElementById('document-url-input').value.trim();
+            if (name && url) {
+                const section = academicData[activeSemesterIndex].courses[currentCourseIndex].sections[currentSectionIndex];
+                if (currentSubfolderIndex !== undefined && currentSubfolderIndex !== null) {
+                    if (!section.subfolders[currentSubfolderIndex].items) section.subfolders[currentSubfolderIndex].items = [];
+                    section.subfolders[currentSubfolderIndex].items.push({ name, url });
+                } else {
+                    if (!section.documents) section.documents = [];
+                    section.documents.push({ name, url });
+                }
+                await updateSemesterData();
+                closeModal();
+            }
+        };
+        window.deleteDocument = (courseIdx, sectionIdx, docIdx, subfolderIdx) => {
             document.getElementById('confirm-modal-text').innerText = "This will delete the document permanently.";
             confirmCallback = async () => {
-                const semester = academicData[activeSemesterIndex];
-                if (category.includes('pastPapers-')) {
-                    const subCategory = category.split('-')[1];
-                    semester.courses[courseIndex].pastPapers[subCategory].splice(docIndex, 1);
+                const section = academicData[activeSemesterIndex].courses[courseIdx].sections[sectionIdx];
+                if (subfolderIdx !== undefined && subfolderIdx !== null) {
+                    section.subfolders[subfolderIdx].items.splice(docIdx, 1);
                 } else {
-                    semester.courses[courseIndex][category].splice(docIndex, 1);
+                    section.documents.splice(docIdx, 1);
                 }
-                await setDoc(doc(db, "academicData", semester.id), semester);
+                await updateSemesterData();
             };
             confirmModal.style.display = 'flex';
-        }
+        };
+        window.renameItem = async () => {
+            const newName = document.getElementById('rename-input').value.trim();
+            if (!newName) return;
+            const { type, courseIdx, sectionIdx, subfolderIdx, docIdx } = renameContext;
+            const course = academicData[activeSemesterIndex].courses[courseIdx];
+            
+            if (type === 'course') course.name = newName;
+            else if (type === 'section') course.sections[sectionIdx].name = newName;
+            else if (type === 'subfolder') course.sections[sectionIdx].subfolders[subfolderIdx].name = newName;
+            else if (type === 'document') {
+                const section = course.sections[sectionIdx];
+                const targetArray = (subfolderIdx !== undefined && subfolderIdx !== null) ? section.subfolders[subfolderIdx].items : section.documents;
+                targetArray[docIdx].name = newName;
+            }
+            await updateSemesterData();
+            closeModal();
+        };
 
         function renderDashboard() {
-            const grid = document.getElementById('semesters-grid');
-            let courseCount = 0;
-            let docCount = 0;
-            grid.innerHTML = '';
-            academicData.forEach((semester, index) => {
-                courseCount += semester.courses.length;
-                semester.courses.forEach(course => {
-                    Object.values(course).forEach(val => {
-                        if (Array.isArray(val)) docCount += val.length;
+            let courseCount = 0, docCount = 0;
+            academicData.forEach(s => {
+                (s.courses || []).forEach(c => {
+                    courseCount++;
+                    (c.sections || []).forEach(sec => {
+                        docCount += (sec.documents || []).length;
+                        (sec.subfolders || []).forEach(sub => docCount += (sub.items || []).length);
                     });
                 });
-
-                const card = document.createElement('div');
-                card.className = 'p-6 bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer';
-                card.onclick = () => showSemesterView(index);
-                card.innerHTML = `<h3 class="text-xl font-bold text-gray-800">${semester.name}</h3><p class="text-gray-500 mt-2">${semester.courses.length} courses</p>`;
-                grid.appendChild(card);
             });
             document.getElementById('stats-semesters').innerText = academicData.length;
             document.getElementById('stats-courses').innerText = courseCount;
             document.getElementById('stats-documents').innerText = docCount;
+            const grid = document.getElementById('semesters-grid');
+            grid.innerHTML = academicData.map((s, i) => `<div onclick="showSemesterView(${i})" class="p-6 bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer"><h3 class="text-xl font-bold text-gray-800">${s.name}</h3><p class="text-gray-500 mt-2">${(s.courses || []).length} courses</p></div>`).join('');
         }
 
         function renderSemesterDetail(semesterIndex) {
-            const content = document.getElementById('semester-detail-content');
             const semester = academicData[semesterIndex];
+            const content = document.getElementById('semester-detail-content');
             
-            let coursesHTML = '';
-            if (semester.courses.length > 0) {
-                semester.courses.forEach((course, courseIndex) => {
-                    let categoriesHTML = '';
-                    const categories = {
-                        notes: 'Notes', 
-                        slides: 'Slides', 
-                        quizzes: 'Quizzes', 
-                        assignments: 'Assignments'
-                    };
+            const coursesHTML = (semester.courses || []).map((course, courseIdx) => {
+                const sectionsHTML = (course.sections || []).map((section, sectionIdx) => {
+                    const renderDoc = (doc, docIdx, subfolderIdx = null) => `
+                        <li class="flex justify-between items-center text-gray-700 text-sm py-2 px-2 rounded-md hover:bg-gray-200">
+                            <span class="truncate pr-2">${doc.name}</span>
+                            <div class="flex space-x-3 flex-shrink-0">
+                                <button onclick="openRenameModal({type: 'document', courseIdx: ${courseIdx}, sectionIdx: ${sectionIdx}, docIdx: ${docIdx}, subfolderIdx: ${subfolderIdx}})" class="text-blue-600 hover:text-blue-800" title="Rename">&#9998;</button>
+                                <button onclick="deleteDocument(${courseIdx}, ${sectionIdx}, ${docIdx}, ${subfolderIdx})" class="text-red-600 hover:text-red-800 font-bold text-lg leading-none" title="Delete">&times;</button>
+                            </div>
+                        </li>`;
+
+                    const directDocsHTML = (section.documents || []).map((doc, docIdx) => renderDoc(doc, docIdx, null)).join('');
                     
-                    Object.entries(categories).forEach(([key, displayName]) => {
-                        const docsList = (course[key] || []).map((doc, docIndex) => `
-                            <li class="flex justify-between items-center text-gray-600 text-sm py-1">
-                                <span class="flex-grow">${doc.name}</span>
-                                <div class="flex space-x-2">
-                                    <button onclick="openRenameModal(${courseIndex}, '${key}', ${docIndex})" class="text-blue-500 hover:text-blue-700 font-bold text-lg leading-none">&vellip;</button>
-                                    <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg leading-none">&times;</button>
+                    const subfoldersHTML = (section.subfolders || []).map((sub, subIdx) => {
+                        const docsHTML = (sub.items || []).map((doc, docIdx) => renderDoc(doc, docIdx, subIdx)).join('');
+                        return `<div class="border bg-white rounded-lg p-3 mt-3">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 class="font-bold text-gray-700">${sub.name}</h4>
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="openRenameModal({type: 'subfolder', courseIdx: ${courseIdx}, sectionIdx: ${sectionIdx}, subfolderIdx: ${subIdx}})" class="text-sm text-blue-600 hover:text-blue-800" title="Rename">&#9998;</button>
+                                            <button onclick="openModal('document', ${courseIdx}, ${sectionIdx}, ${subIdx})" class="bg-blue-500 text-white w-5 h-5 rounded-full text-xs flex items-center justify-center hover:bg-blue-600" title="Add Document">+</button>
+                                            <button onclick="deleteSubfolder(${courseIdx}, ${sectionIdx}, ${subIdx})" class="text-sm text-red-600 hover:text-red-800 font-bold" title="Delete Subfolder">&times;</button>
+                                        </div>
+                                    </div>
+                                    <ul class="divide-y divide-gray-200">${docsHTML || '<li class="text-gray-400 text-xs py-1 px-2">No documents in this folder.</li>'}</ul>
+                                </div>`;
+                    }).join('');
+
+                    return `<div class="border-2 border-gray-200 rounded-lg p-4 bg-gray-50/50">
+                                <h4 class="font-bold text-lg text-gray-800">${section.name}</h4>
+                                <div class="mt-2 pl-2">
+                                    <ul class="divide-y divide-gray-200">${directDocsHTML}</ul>
+                                    ${subfoldersHTML}
+                                    <div class="text-left py-2 mt-2">
+                                        <button onclick="openModal('document', ${courseIdx}, ${sectionIdx}, null)" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 font-semibold">+ Add Document</button>
+                                        <button onclick="openModal('subfolder', ${courseIdx}, ${sectionIdx})" class="ml-2 text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-300 font-semibold">+ Add Sub-folder</button>
+                                    </div>
                                 </div>
-                            </li>`).join('');
-                        
-                        categoriesHTML += `<div class="border rounded p-3"><div class="flex justify-between items-center mb-2"><h4 class="font-bold">${displayName}</h4><button onclick="openModal('document', ${courseIndex}, '${key}')" class="bg-blue-500 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center hover:bg-blue-600">+</button></div><ul class="divide-y">${docsList || '<li class="text-gray-400 text-sm py-1">No documents yet.</li>'}</ul></div>`;
-                    });
-                    
-                    const pastPapersCategories = {
-                        'pastPapers-MID 1': 'MID 1', 
-                        'pastPapers-MID 2': 'MID 2', 
-                        'pastPapers-FINAL': 'FINAL'
-                    };
-                    let pastPapersHTML = '';
-                    Object.entries(pastPapersCategories).forEach(([key, displayName]) => {
-                        const subDocsList = (course.pastPapers[displayName] || []).map((doc, docIndex) => `
-                            <li class="flex justify-between items-center text-gray-600 text-sm py-1">
-                                <span class="flex-grow">${doc.name}</span>
-                                <div class="flex space-x-2">
-                                    <button onclick="openRenameModal(${courseIndex}, '${key}', ${docIndex})" class="text-blue-500 hover:text-blue-700 font-bold text-lg leading-none">&vellip;</button>
-                                    <button onclick="deleteDocument(${courseIndex}, '${key}', ${docIndex})" class="text-red-500 hover:text-red-700 font-bold text-lg leading-none">&times;</button>
+                            </div>`;
+                }).join('');
+
+                return `<div class="bg-white rounded-xl shadow-lg mb-8">
+                            <div class="flex justify-end items-center p-3 bg-gray-50 rounded-t-xl border-b">
+                                 <button onclick="openRenameModal({type: 'course', courseIdx: ${courseIdx}})" class="text-sm bg-gray-200 text-gray-800 px-3 py-1 rounded-full hover:bg-gray-300 font-semibold">Rename Course</button>
+                                 <button onclick="deleteCourse(${courseIdx})" class="text-sm bg-red-100 text-red-700 px-3 py-1 rounded-full hover:bg-red-200 font-semibold ml-3">Delete Course</button>
+                            </div>
+                            <div class="p-6">
+                                <div class="text-center pb-4 mb-6 border-b">
+                                    <h3 class="text-2xl font-bold text-gray-800">${course.name}</h3>
                                 </div>
-                            </li>`).join('');
-                        
-                        pastPapersHTML += `<div class="border rounded p-3"><div class="flex justify-between items-center mb-2"><h4 class="font-bold">${displayName}</h4><button onclick="openModal('document', ${courseIndex}, '${key}')" class="bg-blue-500 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center hover:bg-blue-600">+</button></div><ul class="divide-y">${subDocsList || '<li class="text-gray-400 text-sm py-1">No documents yet.</li>'}</ul></div>`;
-                    });
+                                <div class="space-y-4">${sectionsHTML}</div>
+                                <button onclick="openModal('section', ${courseIdx})" class="mt-6 text-sm bg-green-100 text-green-700 px-4 py-2 rounded-full hover:bg-green-200 font-semibold">+ Add New Section</button>
+                            </div>
+                        </div>`;
+            }).join('');
+            
+            const header = `
+                <div class="flex justify-between items-center mb-8">
+                    <button onclick="showDashboardView()" class="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        Back to Dashboard
+                    </button>
+                    <button onclick="openModal('course')" class="bg-green-500 text-white px-5 py-2 rounded-lg shadow hover:bg-green-600 font-bold">+ Add Course</button>
+                </div>
+                <div class="text-center bg-white p-6 rounded-xl shadow-md border-2 border-gray-200 mb-10">
+                    <h2 class="text-4xl font-extrabold text-gray-800">${semester.name}</h2>
+                </div>
+            `;
 
-                    categoriesHTML += `<div class="border rounded p-3 col-span-full"><h4 class="font-bold text-lg mb-2">Past Papers</h4><div class="course-category-grid">${pastPapersHTML}</div></div>`;
-
-                    coursesHTML += `<div class="bg-white rounded-lg shadow p-4 mb-4"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-semibold text-gray-700">${course.name}</h3><button onclick="deleteCourse(${courseIndex})" class="text-sm bg-red-100 text-red-700 px-3 py-1 rounded-full hover:bg-red-200">Delete Course</button></div><div class="course-category-grid">${categoriesHTML}</div></div>`;
-                });
-            } else {
-                coursesHTML = `<p class="text-gray-500 text-center">No courses added for this semester yet.</p>`;
-            }
-
-            content.innerHTML = `<div class="flex justify-between items-center mb-6"><h2 class="text-3xl font-bold text-gray-800">${semester.name}</h2><button onclick="openModal('course')" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600">+ Add Course</button></div>${coursesHTML}`;
+            content.innerHTML = header + (coursesHTML || '<p class="text-gray-500 text-center bg-white p-10 rounded-lg shadow">No courses have been added to this semester yet.</p>');
         }
     </script>
 </body>
